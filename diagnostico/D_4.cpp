@@ -79,14 +79,12 @@ public:
             return false;
         }
         
-        // Conjunto de caracteres especiales
-        string especiales = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
     
         for (char c : password) {
             if (isupper(c)) mayus = true;
-            if (especiales.find(c) != string::npos) {  // Si el caracter está en la lista de especiales
-                simboloCount++;
-            }
+            if (ispunct(c)) simboloCount++; // Cuenta los símbolos especiales
+
         }
     
         return mayus && (simboloCount >= 2); // Requiere al menos 2 símbolos
@@ -116,7 +114,7 @@ public:
 class Menu
 {
 private:
-    shared_ptr<User> usernuevo;
+    //shared_ptr<User> usernuevo;
     shared_ptr<Business> business;
     shared_ptr<User> UsuarioActual;
     int contador;
@@ -205,7 +203,7 @@ private:
         }
         
         
-        usernuevo = make_shared<User>();
+        auto usernuevo = make_shared<User>();
         usernuevo->setname(name);
         usernuevo->setpassword(password);
         business->insertUsers(usernuevo);
@@ -273,16 +271,12 @@ int main(){
 int contador=0;
 int opcion;
 
-string usuario;
-string password;
 
 shared_ptr<Business> business = make_shared<Business>();
 
 shared_ptr<User> user1 = make_shared<User>();
 shared_ptr<User> user2 = make_shared<User>();
 shared_ptr<User> user3 = make_shared<User>();
-
-shared_ptr<User> userNuevo;
 
 user1->setname("sebastian");
 user1->setpassword("Catalina@32");
