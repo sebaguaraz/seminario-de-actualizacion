@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="./style/calculator.css">
+</head>
+
+<body>
+    <div class="calculator_content">
+
+        <div class="pantalla" id="view">0</div>
+
+        <table class="table-content">
+
+            <tr>
+                <td><button type="button" class="bttn_blue" id="7">7</button></td>
+                <td><button type="button" class="bttn_blue" id="8">8</button></td>
+                <td><button type="button" class="bttn_blue" id="9">9</button></td>
+                <td><button type="button" class="bttn_green" value="+" id="positive">+</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" class="bttn_blue" id="4">4</button></td>
+                <td><button type="button" class="bttn_blue" id="5">5</button></td>
+                <td><button type="button" class="bttn_blue" id="6">6</button></td>
+                <td><button type="button" class="bttn_green" value="-" id="negative">-</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" class="bttn_blue" id="3">3</button></td>
+                <td><button type="button" class="bttn_blue" id="2">2</button></td>
+                <td><button type="button" class="bttn_blue" id="1">1</button></td>
+                <td><button type="button" class="bttn_green" value="*" id="multiplication">*</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" class="bttn_blue" id="0">0</button></td>
+                <td><button type="button" class="bttn_blue" value="." id="point">.</button></td>
+                <td><button type="button" class="bttn_yellow" value="=" id="equal">=</button></td>
+                <td><button type="button" class="bttn_green" value="/" id="division">/</button></td>
+            </tr>
+
+        </table>
+        <!-- <tr> -->
+        <button type="button" class="bttn_red" id="clear">Borrar</button>
+        <!-- </tr> -->
+
+    </div>
+
+
+
+</body>
+
+<script src="./calculator.js"></script>
+
+</html>
