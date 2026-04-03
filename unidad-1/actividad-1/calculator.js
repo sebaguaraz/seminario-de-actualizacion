@@ -63,13 +63,6 @@ function main() {
         // Si la expresión está vacía, no agregamos operador
         if (expresion === "") return;
 
-        // Obtener el último carácter de la expresión
-        let ultimoCaracter = expresion.slice(-1);
-        // Evitar poner dos operadores seguidos
-        if (ultimoCaracter === "+" || ultimoCaracter === "-" || 
-            ultimoCaracter === "*" || ultimoCaracter === "/") {
-            return;
-        }
         // Agregar el operador
         expresion = expresion + op;
         actualizarPantalla();
@@ -88,12 +81,11 @@ function main() {
             let resultado = eval(expresion);
             // Mostrar el resultado en la pantalla
             pantalla.textContent = resultado;
-            // Guardar el resultado como nueva expresión para poder seguir operando
-            expresion = resultado.toString();
         } catch (error) {
             // Si hay algún error (por ejemplo, división por cero o expresión mal formada)
             pantalla.textContent = "Error";
             expresion = "0";
+            actualizarPantalla();
         }
     }
 
