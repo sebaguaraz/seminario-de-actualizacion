@@ -6,11 +6,11 @@ class Calculator_Component extends HTMLElement {
 
         this.cuenta = "";
 
-        this.classList = "calculator_content";
+        this.className = "calculator_content";
         // * Elementos HTML que tiene el COMPONENTE como propiedades 
 
         this.view = document.createElement("div");
-        this.view.classList = "pantalla";
+        this.view.className = "pantalla";
         // botones numericos
         this.button0 = document.createElement("button");
         this.button1 = document.createElement("button");
@@ -37,44 +37,44 @@ class Calculator_Component extends HTMLElement {
         this.view.textContent = "0";
 
         this.button0.textContent = 0;
-        this.button0.classList = "bttn_blue";
+        this.button0.className = "bttn_blue";
         this.button1.textContent = 1;
-        this.button1.classList = "bttn_blue";
+        this.button1.className = "bttn_blue";
         this.button2.textContent = 2;
-        this.button2.classList = "bttn_blue";
+        this.button2.className = "bttn_blue";
         this.button3.textContent = 3;
-        this.button3.classList = "bttn_blue";
+        this.button3.className = "bttn_blue";
         this.button4.textContent = 4;
-        this.button4.classList = "bttn_blue";
+        this.button4.className = "bttn_blue";
         this.button5.textContent = 5;
-        this.button5.classList = "bttn_blue";
+        this.button5.className = "bttn_blue";
         this.button6.textContent = 6;
-        this.button6.classList = "bttn_blue";
+        this.button6.className = "bttn_blue";
         this.button7.textContent = 7;
-        this.button7.classList = "bttn_blue";
+        this.button7.className = "bttn_blue";
         this.button8.textContent = 8;
-        this.button8.classList = "bttn_blue";
+        this.button8.className = "bttn_blue";
         this.button9.textContent = 9;
-        this.button9.classList = "bttn_blue";
+        this.button9.className = "bttn_blue";
 
         this.button_negative.textContent = "-";
-        this.button_negative.classList = "bttn_green"  ;
+        this.button_negative.className = "bttn_green"  ;
         this.button_positive.textContent = "+";
-        this.button_positive.classList = "bttn_green";
+        this.button_positive.className = "bttn_green";
         this.button_multiplication.textContent = "x";
-        this.button_multiplication.classList = "bttn_green";
+        this.button_multiplication.className = "bttn_green";
         this.button_division.textContent = "/";
-        this.button_division.classList = "bttn_green";
+        this.button_division.className = "bttn_green";
         this.button_point.textContent = ".";
-        this.button_point.classList = "bttn_blue";
+        this.button_point.className = "bttn_blue";
         this.button_equal.textContent = "=";
-        this.button_equal.classList = "bttn_yellow";
+        this.button_equal.className = "bttn_yellow";
         this.button_delete.textContent = "Borrar";
-        this.button_delete.classList = "bttn_red";
+        this.button_delete.className = "bttn_red";
 
 
         this.table = document.createElement("table");
-        this.table.classList = "table-content";
+        this.table.className = "table-content";
         this.tr1 = document.createElement("tr");
         this.tr2 = document.createElement("tr");
         this.tr3 = document.createElement("tr");
@@ -145,45 +145,46 @@ class Calculator_Component extends HTMLElement {
 
     // * este metodo se ejecuta al agregar la instancia de la clase en el DOM
     connectedCallback() {
-        alert("Componente agregado visualmente en el html");
 
         this.view.textContent = 0;
         // *asocia esta funcion al elemento cuando ocurre un evento y cuando se usa THIS dentro de la funcion hace referencia en que elemento ocurrio el evento. osea <BUTTON></BUTTON>
         // this.button_delete.onclick = this.deleteAccount;
 
 
-        // * asocio un arrow function ()=>{} a un elemento cuando ocurre un evento y cuando uso el THIS dentro de la funcion hace referencia a propiedades de la clase
-        this.button_delete.onclick = () => { this.deleteAccount() }
+        // * REFERENCIA DE THIS a ELEMENTO: asocio un arrow function ()=>{} (funcion sin nombre) a un elemento cuando ocurre un evento y cuando uso el THIS dentro de la funcion hace referencia a propiedades de la clase: MALA PRACTICA xq ARROW FUNCTION ocupa espacio en la memoria del navegador
 
-        this.button0.onclick = () => { this.addNumber("0") }
-        this.button1.onclick = () => { this.addNumber("1") }
-        this.button2.onclick = () => { this.addNumber("2") }
-        this.button3.onclick = () => { this.addNumber("3") }
-        this.button4.onclick = () => { this.addNumber("4") }
-        this.button5.onclick = () => { this.addNumber("5") }
-        this.button6.onclick = () => { this.addNumber("6") }
-        this.button7.onclick = () => { this.addNumber("7") }
-        this.button8.onclick = () => { this.addNumber("8") }
-        this.button9.onclick = () => { this.addNumber("9") }
+        // * REFERENCIA DE THIS a CLASE: se pasa como parametro el contexto de la clase con .bind()
+        this.button_delete.onclick = this.deleteAccount.bind(this); 
+
+        this.button0.onclick = this.addNumber.bind(this,"0");         
+        this.button1.onclick = this.addNumber.bind(this, "1"); 
+        this.button2.onclick = this.addNumber.bind(this , "2"); 
+        this.button3.onclick = this.addNumber.bind(this , "3"); 
+        this.button4.onclick = this.addNumber.bind(this , "4"); 
+        this.button5.onclick = this.addNumber.bind(this , "5"); 
+        this.button6.onclick = this.addNumber.bind(this , "6"); 
+        this.button7.onclick = this.addNumber.bind(this , "7"); 
+        this.button8.onclick = this.addNumber.bind(this , "8"); 
+        this.button9.onclick = this.addNumber.bind(this , "9"); 
 
 
-        this.button_division.onclick = () => { this.addNumber("/") }
-        this.button_multiplication.onclick = () => { this.addNumber("*") }
-        this.button_positive.onclick = () => { this.addNumber("+") }
-        this.button_negative.onclick = () => { this.addNumber("-") }
+        this.button_division.onclick = this.addNumber.bind(this, "/"); 
+        this.button_multiplication.onclick = this.addNumber.bind(this , "*"); 
+        this.button_positive.onclick = this.addNumber.bind(this , "+"); 
+        this.button_negative.onclick = this.addNumber.bind(this , "-"); 
 
-        this.button_equal.onclick = () => { this.calculate() }
+        this.button_equal.onclick = this.calculate.bind(this); 
+        this.button_point.onclick = this.addNumber.bind(this , "."); 
     }
 
 
     addNumber(number) {
 
-        if (this.cuenta === "" || !this.cuenta) {
-
-            this.view.textContent = this.cuenta;
+        if (this.cuenta === "") {
+            this.cuenta = number;
+        } else {
+            this.cuenta += number;
         }
-
-        this.cuenta += number;
 
         this.view.textContent = this.cuenta;
     }
@@ -211,7 +212,7 @@ class Calculator_Component extends HTMLElement {
     }
 
     // * este metodo se ejecuta al eliminar la instancia de la clase en el DOM
-    desconnectedCallback() {
+    disconnectedCallback() {
 
     }
 
