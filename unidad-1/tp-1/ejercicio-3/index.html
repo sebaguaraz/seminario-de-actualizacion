@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+</body>
+
+
+<script>
+
+    class Slider extends HTMLElement {
+
+        constructor(frecuency, value) {
+
+            super()
+            this.slider = document.createElement("input");
+            this.slider.dataset.frequency = frecuency;
+            this.slider.type = "range";
+            this.slider.min = "0";
+            this.slider.max = "100";
+            this.slider.value = 30;
+            this.slider.className = "slider"
+
+            this.showValue = document.createElement("span")
+            this.showfrecuency = document.createElement("span")
+
+            this.showfrecuency.textContent = `${frecuency}`
+            this.showValue.textContent = ` - ${value}`
+
+            this.appendChild(this.showfrecuency)
+            this.appendChild(this.slider)
+            this.appendChild(this.showValue)
+        }
+
+        setValueSlider(value) {
+            this.showValue.textContent = ` - ${value}dB`
+        }
+
+        connectedCallback() { }
+
+
+        disconnectedCallback() { }
+    }
+
+    class Graphic_EQ extends HTMLElement {
+
+        constructor() {
+            super();
+
+            this.data = {
+                "32Hz": "+0dB",
+                "64Hz": "+0dB",
+                "130Hz": "+0dB",
+                "260Hz": "+0dB",
+                "500Hz": "+0dB",
+                "1k": "+0dB",
+                "2k": "+0dB",
+                "4k": "+0dB",
+                "8.3k": "+0dB",
+                "16.5k": "+0dB",
+
+            };
+
+            this.div_slider1 = document.createElement("div")
+            this.div_slider1.className = "slidecontainer"
+            // Creo una instancia de la clase que representa un elemento HTML personalizado
+            this.slider1 = new Slider("32Hz", this.data["32Hz"])
+            this.slider2 = new Slider("64Hz", this.data["64Hz"])
+            this.slider3 = new Slider("130Hz", this.data["130Hz"])
+            this.slider4 = new Slider("260Hz", this.data["260Hz"])
+            this.slider5 = new Slider("500Hz", this.data["500Hz"])
+            this.slider6 = new Slider("1k", this.data["1k"])
+            this.slider7 = new Slider("2k", this.data["2k"])
+            this.slider8 = new Slider("4k", this.data["4k"])
+            this.slider9 = new Slider("8.3k", this.data["8.3k"])
+            this.slider10 = new Slider("16.5k", this.data["16.5k"])
+
+            
+
+            this.div_slider1.appendChild(this.slider1)
+            
+            this.div_slider1.appendChild(this.slider2)
+            
+            this.div_slider1.appendChild(this.slider3)
+            
+            this.div_slider1.appendChild(this.slider4)
+            
+            this.div_slider1.appendChild(this.slider5)
+            
+            this.div_slider1.appendChild(this.slider6)
+            
+            this.div_slider1.appendChild(this.slider7)
+            
+            this.div_slider1.appendChild(this.slider8)
+            
+            this.div_slider1.appendChild(this.slider9)
+            
+            this.div_slider1.appendChild(this.slider10)
+            
+            this.appendChild(this.div_slider1)
+
+        }
+
+        onSliderValueChange(event) {
+            // currentTarget devuelve el elemento padre que dispara el evento y target el elemento hijo que recibe el evento
+            const sliderElement = event.currentTarget
+            console.log(event.target)
+            const key = event.target.dataset.frequency
+            const value = event.target.value
+
+            this.setData(key, `${value}dB`, sliderElement)
+
+            return
+        }
+
+        setData(key, value, sliderElement) {
+
+            sliderElement.setValueSlider(value)
+
+            let result = this.data[key] = value
+
+            this.getData()
+
+        }
+
+        getData() {
+            console.log(this.data)
+            return this.data;
+
+        }
+
+
+
+        connectedCallback() {
+
+
+            // .BIND() -> es como pasarle "POR DETRAS" a la FUNCTION cual es la referencia del THIS asi puede seguir usando dentro de la implementacion
+            this.slider1.oninput = this.onSliderValueChange.bind(this)
+            this.slider2.oninput = this.onSliderValueChange.bind(this)
+            this.slider3.oninput = this.onSliderValueChange.bind(this)
+            this.slider4.oninput = this.onSliderValueChange.bind(this)
+            this.slider5.oninput = this.onSliderValueChange.bind(this)
+            this.slider6.oninput = this.onSliderValueChange.bind(this)
+            this.slider7.oninput = this.onSliderValueChange.bind(this)
+            this.slider8.oninput = this.onSliderValueChange.bind(this)
+            this.slider9.oninput = this.onSliderValueChange.bind(this)
+            this.slider10.oninput = this.onSliderValueChange.bind(this)
+
+        }
+
+        disconnectedCallback() {
+            this.slider1.oninput = null
+            this.slider2.oninput = null
+            this.slider3.oninput = null
+            this.slider4.oninput = null
+            this.slider5.oninput = null
+            this.slider6.oninput = null
+            this.slider7.oninput = null
+            this.slider8.oninput = null
+            this.slider9.oninput = null
+            this.slider10.oninput = null
+        }
+
+    }
+
+    customElements.define("graphic-eq", Graphic_EQ)
+    customElements.define("slider-x", Slider)
+
+    function main() {
+
+        const objeto = new Graphic_EQ()
+        document.body.appendChild(objeto)
+
+    }
+
+    window.onload = main
+
+
+
+
+</script>
+
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 1</title>
+</head>
+
+<body>
+</body>
+
+<script>
+
+    class UserForm extends HTMLElement {
+
+        constructor() {
+            // invoco al constructor padre 
+            super();
+
+            // *creo las propiedades de la clase 
+
+            this.form = document.createElement("form");
+            this.labelname = document.createElement("label")
+            this.labelname.textContent = "Nombre: ";
+            this.labelname.htmlFor = "name"
+
+            this.inputname = document.createElement("input");
+            this.inputname.id = "name"
+
+            this.br1 = document.createElement("br")
+
+            this.labelusername = document.createElement("label")
+            this.labelusername.textContent = "Apellido: ";
+            this.labelusername.htmlFor = "username"
+            this.inputusername = document.createElement("input");
+            this.inputusername.id = "username"
+
+            this.br2 = document.createElement("br")
+
+            this.bttn = document.createElement("button");
+            this.bttn.textContent = "Enviar"
+            this.bttn.type = "submit"
+
+            this.form.appendChild(this.labelname)
+            this.form.appendChild(this.inputname)
+            this.form.appendChild(this.br1)
+            this.form.appendChild(this.labelusername)
+            this.form.appendChild(this.inputusername)
+            this.form.appendChild(this.br2)
+            this.form.appendChild(this.bttn)
+
+            this.appendChild(this.form);
+
+        }
+
+        showMessage(username, name) {
+
+            const saludo = `¡Buenos Días ${username.toUpperCase()}, ${name.charAt(0).toUpperCase() + name.slice(1)}`
+
+            alert(saludo)
+
+
+        }
+
+
+        submitForm(event) {
+            event.preventDefault();
+            console.log("Espera! prevengo que se recargue ");
+
+            const username = this.inputusername.value
+            const name = this.inputname.value
+
+            if (!username || !name) {
+                alert("Ingresar ambos campos validos")
+                this.form.reset()
+            }
+
+            this.showMessage(username, name)
+
+        }
+
+
+
+        <!-- * se invoca una vez agregado al DOM la instancia -->
+        connectedCallback() {
+            console.log("me creó");
+
+            this.form.onsubmit = this.submitForm.bind(this);
+
+
+        }
+
+
+        disconnectCallback() { }
+    };
+
+
+    customElements.define("user-form", UserForm);
+
+    const main = () => {
+        const form_user = new UserForm()
+        document.body.appendChild(form_user);
+    }
+
+    window.onload = main;
+
+
+</script>
+
+
+</html>

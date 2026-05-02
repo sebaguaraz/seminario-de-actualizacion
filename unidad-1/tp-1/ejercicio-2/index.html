@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 2</title>
+</head>
+
+<body>
+</body>
+
+<script>
+
+    class ValidateDate extends HTMLElement {
+
+        constructor() {
+            super();
+
+            this.form = document.createElement("form")
+            this.labeldate = document.createElement("label")
+            this.labeldate.textContent = "Ingrese fecha de Nac. "
+            this.labeldate.htmlFor = "date"
+            this.inputdate = document.createElement("input")
+            this.inputdate.id = "date"
+            this.inputdate.type = "text"
+            this.inputdate.placeholder = "YYYY-MM-DD"
+
+            this.bttn = document.createElement("button");
+            this.bttn.type = "submit"
+            this.bttn.textContent = "Enviar"
+
+            this.showAccount = document.createElement("div");
+            this.value = 0
+            this.showAccount.textContent = `Nro Intento: ${this.value}`
+
+
+            this.appendChild(this.form)
+            this.form.appendChild(this.labeldate)
+            this.form.appendChild(this.inputdate)
+            this.form.appendChild(this.bttn)
+            this.form.appendChild(this.showAccount)
+
+
+
+
+
+        }
+
+        // el OBJETO event es creado por el navegador y me lo pasa como parametro a la funcion manejadora. EVENT guarda info sobre el evento "SUBMIT" que ocurrio
+
+        validate(event) {
+            console.log("el objeto event creado por el navegador es: " + event.target);
+            event.preventDefault();
+
+            const response = this.inputdate.value
+
+            const fecha = new Date(response);
+
+            const isValid = Number(fecha.getTime())
+            if (isNaN(isValid)) {
+                this.value += 1;
+                this.showValue();
+                return;
+
+            }
+
+            this.value = 0
+            this.showAccount.textContent = `Fecha válida: ${fecha.toLocaleDateString()}. Intentos reiniciados.`;
+
+        }
+
+        showValue() {
+
+            this.showAccount.textContent = `el texto suministrado es inválido, Nro Intento: ${this.value}`
+
+
+        }
+
+        connectedCallback() {
+            
+            // validate.BIND() -> es como pasarle "POR DETRAS" a VALIDATE cual es la referencia del THIS asi puede seguir usando dentro de la implementacion
+            this.form.onsubmit = this.validate.bind(this)
+
+        }
+
+        disconnectedCallback() {
+
+            this.form.onsubmit = null;
+        }
+
+    }
+
+    customElements.define("validate-date", ValidateDate)
+
+    function main() {
+
+        const objeto = new ValidateDate()
+        document.body.appendChild(objeto)
+
+    }
+
+    window.onload = main
+
+
+</script>
+
+</html>
