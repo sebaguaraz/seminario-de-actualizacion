@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+</body>
+
+
+<script>
+
+    class formChat extends HTMLElement {
+        constructor() {
+
+            super()
+
+            this.form = document.createElement("form")
+            this.input = document.createElement("input")
+            this.input.placeholder = "Ingrese mensaje"
+            this.bttn = document.createElement("button")
+            this.bttn.type = "submit"
+            this.bttn.textContent = "Send"
+
+            this.form.appendChild(this.input)
+            this.form.appendChild(this.bttn)
+            this.appendChild(this.form)
+
+            this.response = null
+        }
+
+        setMessage(event) {
+
+            event.preventDefault();
+
+            this.response = {
+
+                text: this.input.value,
+                span: new Date(),
+                who: "tu"
+            }
+
+        }
+
+
+        getMessage(){
+        
+            return this.response;
+        }
+
+        connectedCallback() {
+
+            this.form.onsubmit = this.setMessage.bind(this)
+
+        }
+
+
+        disconnectedCallback() {
+
+            this.bttn.onsubmit = null;
+        }
+    }
+
+
+    class Message extends HTMLElement {
+
+        constructor(text, span, who) {
+
+            super()
+
+            this.contenedor = document.createElement("div")
+            this.img = document.createElement("img")
+            this.texto = document.createElement("p")
+            this.span = document.createElement("span")
+
+            this.texto.textContent = text
+            this.span.textContent = span
+
+            this.contenedor.className = who === "tu" ? "container" : "container darker"
+            this.img.className = who === "el" ? "right" : ""
+            this.img.src = who === "tu" ? "./img/bandmember.jpg" : "./img/avatar_g2.jpg"
+            this.img.alt = "Avatar"
+
+
+            this.span.className = who === "tu" ? "time-right" : "time-left"
+
+            this.contenedor.appendChild(this.img)
+            this.contenedor.appendChild(this.texto)
+            this.contenedor.appendChild(this.span)
+
+            this.appendChild(this.contenedor)
+
+        }
+
+        connectedCallback() { }
+
+
+        disconnectedCallback() { }
+    }
+
+    class Chat extends HTMLElement {
+
+        constructor() {
+
+            super()
+
+            
+
+            this.form_Chat = new formChat();
+
+
+            this.message1 = new Message("Hello. How are you today?", "11:00", "tu")
+
+            this.message2 = new Message("Hey! I'm fine. Thanks for asking!", "11:01", "el")
+
+            this.message3 = new Message("Sweet! So, what do you wanna do today?", "11:02", "tu")
+
+            this.message4 = new Message("Nah, I dunno. Play soccer.. or learn more coding perhaps?", "11:05", "el")
+
+            this.appendChild(this.message1)
+            this.appendChild(this.message2)
+            this.appendChild(this.message3)
+            this.appendChild(this.message4)
+
+            this.appendChild(this.form_Chat)
+
+        }
+
+
+        connectedCallback() { }
+
+
+        disconnectedCallback() { }
+    }
+
+    customElements.define("chat-x", Chat)
+    customElements.define("message-x", Message)
+    customElements.define("form-x", formChat)
+
+
+    function main() {
+
+        const objeto = new Chat()
+        document.body.appendChild(objeto)
+
+    }
+
+    window.onload = main
+
+
+
+
+</script>
+
+
+</html>
