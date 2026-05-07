@@ -156,6 +156,7 @@ class Calculator_Component extends HTMLElement {
         // * REFERENCIA DE THIS a CLASE: se pasa como parametro el contexto de la clase con .bind()
         this.button_delete.onclick = this.deleteAccount.bind(this); 
 
+        // * en criollo, this.addNumber (te paso MI funcion de MI CLASE) y .bind(this) (te aclaro que el this sea de CLASE)
         this.button0.onclick = this.addNumber.bind(this,"0");         
         this.button1.onclick = this.addNumber.bind(this, "1"); 
         this.button2.onclick = this.addNumber.bind(this , "2"); 
