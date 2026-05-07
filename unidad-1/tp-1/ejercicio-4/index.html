@@ -22,6 +22,7 @@
 
             this.form = document.createElement("form")
             this.input = document.createElement("input")
+            this.input.name = "dataMessage"
             this.input.placeholder = "Ingrese mensaje"
             this.bttn = document.createElement("button")
             this.bttn.type = "submit"
@@ -31,45 +32,34 @@
             this.form.appendChild(this.bttn)
             this.appendChild(this.form)
 
-            this.response = null
-        }
 
-        setMessage(event) {
-
-            event.preventDefault();
-
-            this.response = {
-
-                text: this.input.value,
-                span: new Date(),
-                who: "tu"
-            }
 
         }
 
+        getInformation() {
+            return {
+                dataMessage: this.input.value,
+                time: new Date().toLocaleTimeString()
+            };
 
-        getMessage(){
-        
-            return this.response;
+
         }
 
         connectedCallback() {
-
-            this.form.onsubmit = this.setMessage.bind(this)
 
         }
 
 
         disconnectedCallback() {
 
-            this.bttn.onsubmit = null;
+            this.form.onsubmit = null;
         }
     }
 
 
-    class Message extends HTMLElement {
+    class SentMessage extends HTMLElement {
 
-        constructor(text, span, who) {
+        constructor(dataMessage, time) {
 
             super()
 
@@ -78,16 +68,16 @@
             this.texto = document.createElement("p")
             this.span = document.createElement("span")
 
-            this.texto.textContent = text
-            this.span.textContent = span
+            this.texto.textContent = dataMessage
+            this.span.textContent = time
 
-            this.contenedor.className = who === "tu" ? "container" : "container darker"
-            this.img.className = who === "el" ? "right" : ""
-            this.img.src = who === "tu" ? "./img/bandmember.jpg" : "./img/avatar_g2.jpg"
+            this.contenedor.className = "container"
+            this.img.className = ""
+            this.img.src = "./img/bandmember.jpg"
             this.img.alt = "Avatar"
 
 
-            this.span.className = who === "tu" ? "time-right" : "time-left"
+            this.span.className = "time-right"
 
             this.contenedor.appendChild(this.img)
             this.contenedor.appendChild(this.texto)
@@ -103,50 +93,129 @@
         disconnectedCallback() { }
     }
 
-    class Chat extends HTMLElement {
+    class ReceiveMessage extends HTMLElement {
 
-        constructor() {
+
+        constructor(dataMessage, time) {
 
             super()
 
-            
+            this.contenedor = document.createElement("div")
+            this.img = document.createElement("img")
+            this.texto = document.createElement("p")
+            this.span = document.createElement("span")
 
-            this.form_Chat = new formChat();
+            this.texto.textContent = dataMessage
+            this.span.textContent = time
 
+            this.contenedor.className = "container darker"
+            this.img.className = "right"
+            this.img.src = "./img/avatar_g2.jpg"
+            this.img.alt = "Avatar"
 
-            this.message1 = new Message("Hello. How are you today?", "11:00", "tu")
+            this.span.className = "time-left"
 
-            this.message2 = new Message("Hey! I'm fine. Thanks for asking!", "11:01", "el")
+            this.contenedor.appendChild(this.img)
+            this.contenedor.appendChild(this.texto)
+            this.contenedor.appendChild(this.span)
 
-            this.message3 = new Message("Sweet! So, what do you wanna do today?", "11:02", "tu")
-
-            this.message4 = new Message("Nah, I dunno. Play soccer.. or learn more coding perhaps?", "11:05", "el")
-
-            this.appendChild(this.message1)
-            this.appendChild(this.message2)
-            this.appendChild(this.message3)
-            this.appendChild(this.message4)
-
-            this.appendChild(this.form_Chat)
+            this.appendChild(this.contenedor)
 
         }
-
 
         connectedCallback() { }
 
 
         disconnectedCallback() { }
     }
+    //addeventlistener, removeeventlistener, funcion flecha, funcion anonima 
+
+
+    class Chat extends HTMLElement {
+
+        constructor() {
+
+            super()
+
+            this.form_Chat = new formChat()
+
+            this.listMessages = document.createElement("div")
+            this.listMessages.className = "listMessages"
+            this.appendChild(this.listMessages)
+
+        }
+
+        //Paso los datos para encapsular la implementacion, se debe saber que hace pero no como lo hace
+        sendMessage(dataMessage, time) {
+
+            let newMessage = new SentMessage(dataMessage, time)
+
+            this.listMessages.appendChild(newMessage);
+
+
+        }
+
+        receiveMessage(dataMessage, time) {
+
+            let newMessage = new ReceiveMessage(dataMessage, time)
+
+            this.listMessages.appendChild(newMessage);
+
+
+        }
+
+        addForm() {
+
+            this.appendChild(this.form_Chat)
+        }
+
+        onInputValue(event) {
+            event.preventDefault()
+            this.sendNewMessage()
+        }
+
+        sendNewMessage() {
+            let object_input = this.form_Chat.getInformation()
+
+            let { dataMessage, time } = object_input;
+
+            let newMessage = new SentMessage(dataMessage, time)
+
+            this.form_Chat.input.value = ""
+
+            this.listMessages.appendChild(newMessage)
+
+        }
+
+        connectedCallback() {
+
+            this.form_Chat.form.onsubmit = this.onInputValue.bind(this)
+        }
+
+
+        disconnectedCallback() {
+            this.form_Chat.form.onsubmit = null
+        }
+    }
 
     customElements.define("chat-x", Chat)
-    customElements.define("message-x", Message)
+    customElements.define("message-receive", ReceiveMessage)
+    customElements.define("message-sent", SentMessage)
     customElements.define("form-x", formChat)
 
 
     function main() {
 
-        const objeto = new Chat()
-        document.body.appendChild(objeto)
+        const viewObject = new Chat()
+
+        viewObject.sendMessage("Hello. How are you today?", "11:00")
+        viewObject.receiveMessage("Hey! I'm fine. Thanks for asking!", "11:01")
+        viewObject.sendMessage("Sweet! So, what do you wanna do today?", "11:02")
+        viewObject.receiveMessage("Nah, I dunno. Play soccer.. or learn more coding perhaps?", "11:05")
+
+        viewObject.addForm()
+
+        document.body.appendChild(viewObject)
 
     }
 

@@ -34,7 +34,7 @@ body {
 .container img.right {
   float: right;
   margin-left: 20px;
-  margin-right:0;
+  margin-right: 0;
 }
 
 .time-right {
@@ -46,3 +46,4 @@ body {
   float: left;
   color: #999;
 }
+

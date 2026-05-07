@@ -1,0 +1,2 @@
+4. A partir del ejemplo proporcionado en la página https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_chat&authuser=0 
+Nótese que se trata de una representación HTML/CSS/JS que denota una sección de intercambio de mensajes de Chat. Construya una abstracción mediante WebComponents que encapsule esa interfaz y diseñe un método que permita insertar los mensajes intercambiados.
