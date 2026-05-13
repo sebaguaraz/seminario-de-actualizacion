@@ -1,0 +1,1 @@
+5A. Desarrolle un WebComponent tipo "Formulario" que le permita cargar toda la información pertinente de la factura de AFIP adjuntada. Este WebComponent deberá tener un botón "Generar factura" que deberá abrir una pestaña nueva con una gráfica del diseño de la factura solicitada. 

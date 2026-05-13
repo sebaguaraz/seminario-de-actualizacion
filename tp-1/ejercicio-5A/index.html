@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+
+</body>
+
+<script>
+
+
+    class Formulario_AFIP extends HTMLElement {
+
+        constructor() {
+
+            super()
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "Formulario AFIP"
+
+            this.form = document.createElement("form")
+            this.label_razonSocial = document.createElement("label")
+            this.input_razonSocial = document.createElement("input")
+
+            this.label_razonSocial.textContent = "Razon social: "
+            this.label_razonSocial.htmlFor = "razon_social"
+            this.input_razonSocial.id = "razon_social"
+            this.input_razonSocial.type = "text"
+            this.input_razonSocial.name = "razon_social"
+
+            this.label_domicilioComercial = document.createElement("label")
+            this.input_domicilioComercial = document.createElement("input")
+
+            this.label_domicilioComercial.textContent = "Domicilio Comercial: "
+            this.label_domicilioComercial.htmlFor = "dom_comercial"
+            this.input_domicilioComercial.id = "dom_comercial"
+            this.input_domicilioComercial.type = "text"
+            this.input_domicilioComercial.name = "dom_comercial"
+
+
+            this.label_CUIT = document.createElement("label")
+            this.input_CUIT = document.createElement("input")
+
+            this.label_CUIT.textContent = "CUIT: "
+            this.label_CUIT.htmlFor = "cuit"
+            this.input_CUIT.id = "cuit"
+            this.input_CUIT.type = "number"
+            this.input_CUIT.name = "cuit"
+
+
+            this.label_ingresosBrutos = document.createElement("label")
+            this.input_ingresosBrutos = document.createElement("input")
+
+            this.label_ingresosBrutos.textContent = "Ingresos Brutos: "
+            this.label_ingresosBrutos.htmlFor = "ingr brutos"
+            this.input_ingresosBrutos.id = "ingr brutos"
+            this.input_ingresosBrutos.type = "number"
+            this.input_ingresosBrutos.name = "ingr_brutos"
+
+
+            this.label_perid_fact_desde = document.createElement("label")
+            this.input_perid_fact_desde = document.createElement("input")
+
+            this.label_perid_fact_desde.textContent = "Periodo facturación desde: "
+            this.label_perid_fact_desde.htmlFor = "perid fact"
+            this.input_perid_fact_desde.id = "perid fact"
+            this.input_perid_fact_desde.type = "date"
+            this.input_perid_fact_desde.name = "period_fact_desde"
+
+
+            this.label_perid_fact_hasta = document.createElement("label")
+            this.input_perid_fact_hasta = document.createElement("input")
+
+            this.label_perid_fact_hasta.textContent = "Periodo facturación hasta: "
+            this.label_perid_fact_hasta.htmlFor = "perid fact"
+            this.input_perid_fact_hasta.id = "perid fact"
+            this.input_perid_fact_hasta.type = "date"
+            this.input_perid_fact_hasta.name = "period_fact_hasta"
+
+
+            this.label_fech_vcto_pago = document.createElement("label")
+            this.input_fech_vcto_pago = document.createElement("input")
+
+            this.label_fech_vcto_pago.textContent = "Fecha vcto. para el pago: "
+            this.label_fech_vcto_pago.htmlFor = "vcto pago"
+            this.input_fech_vcto_pago.id = "vcto pago"
+            this.input_fech_vcto_pago.type = "date"
+            this.input_fech_vcto_pago.name = "fecha_vcto_pago"
+
+            this.bttn = document.createElement("button")
+            this.bttn.textContent = "Generar Factura"
+            this.bttn.type = "submit"
+
+
+            this.br1 = document.createElement("br")
+            this.br2 = document.createElement("br")
+            this.br3 = document.createElement("br")
+            this.br4 = document.createElement("br")
+            this.br5 = document.createElement("br")
+            this.br6 = document.createElement("br")
+            this.br7 = document.createElement("br")
+
+            this.appendChild(this.h1)
+
+            this.form.appendChild(this.label_razonSocial)
+            this.form.appendChild(this.input_razonSocial)
+            this.form.appendChild(this.br1)
+            this.form.appendChild(this.label_domicilioComercial)
+            this.form.appendChild(this.input_domicilioComercial)
+            this.form.appendChild(this.br2)
+            this.form.appendChild(this.label_CUIT)
+            this.form.appendChild(this.input_CUIT)
+            this.form.appendChild(this.br3)
+            this.form.appendChild(this.label_ingresosBrutos)
+            this.form.appendChild(this.input_ingresosBrutos)
+            this.form.appendChild(this.br4)
+            this.form.appendChild(this.label_perid_fact_desde)
+            this.form.appendChild(this.input_perid_fact_desde)
+            this.form.appendChild(this.br5)
+            this.form.appendChild(this.label_perid_fact_hasta)
+            this.form.appendChild(this.input_perid_fact_hasta)
+            this.form.appendChild(this.br6)
+            this.form.appendChild(this.label_fech_vcto_pago)
+            this.form.appendChild(this.input_fech_vcto_pago)
+            this.form.appendChild(this.br7)
+            this.form.appendChild(this.bttn)
+            this.appendChild(this.form)
+
+
+
+        }
+
+        getData(event) {
+
+            event.preventDefault()
+
+            const formdata = new FormData(this.form)
+
+            const data = Object.fromEntries(formdata)
+
+            this.sendDataPDF(data)
+
+        }
+
+        sendDataPDF(data) {
+            console.log(data)
+
+            const doc = new window.jspdf.jsPDF()
+
+            doc.setFontSize(16)
+            doc.text("ORIGINAL", 80, 10)
+            doc.text("FACTURA", 130, 20)
+            // Cada campo con su propia línea Y
+            doc.setFontSize(12)
+            doc.text("Razon social: ", 20, 40)
+            doc.text(data.razon_social, 50, 40)
+
+            doc.text("Domic. comercial: ", 20, 50)
+            doc.text(data.dom_comercial, 60, 50)
+
+            doc.text("CUIT: ", 130, 40)
+            doc.text(data.cuit, 150, 40)
+
+            doc.text("Ingresos Brutos: ", 130, 50)
+            doc.text(data.ingr_brutos, 170, 50)
+
+            doc.text("Periodo fact. desde: ", 20, 60)
+            doc.text(data.period_fact_desde, 60, 60)
+
+            doc.text("hasta: ", 87, 60)
+            doc.text(data.period_fact_hasta, 100, 60)
+
+            doc.text("Fecha vcto. pago: ", 127, 60)
+            doc.text(data.fecha_vcto_pago, 167, 60)
+
+            doc.autoTable({
+                startY: 80,
+                head: [["Codigo", "Producto/Servicio", "Cantidad", "U.Medida", "% Bonif", "Imp. Bonif.", "Subtotal"]],
+                body: [
+                    ["", "UGL 6- CAPITA SALUD MENTAL PERIODO 06/16", "1,00", "otras unidades", "264002.11", "0.00", "0.00"],
+                    ["", "Ajuste complementario -02/16", "1,00", "otras unidades", "8016.22", "0.00", "0.00"],
+                    ["", "Ajuste complementario -03/16", "1,00", "otras unidades", "7575.66", "0.00", "0.00"]
+                ]
+            })
+
+            doc.save("facturaAFIP.pdf")
+        }
+
+        connectedCallback() {
+
+            this.form.onsubmit = this.getData.bind(this)
+        }
+
+
+        disconnectCallback() {
+
+            this.form.onsubmit = null
+        }
+
+
+    }
+
+
+    customElements.define("form-afip", Formulario_AFIP)
+
+
+    function main() {
+
+        const formAFIP = new Formulario_AFIP()
+        document.body.appendChild(formAFIP)
+
+
+    }
+
+
+    window.onload = main
+
+</script>
+
+
+</html>
