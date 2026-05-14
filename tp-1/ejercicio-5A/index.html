@@ -10,218 +10,188 @@
 </head>
 
 <body>
-
 </body>
 
 <script>
-
+    class AFIP_Data {
+        constructor() {
+            this.data = {
+                tipo_factura: "B",
+                nro_compr: "0000641",
+                punto_de_vente: "0002",
+                fecha_emision: "27/07/2016",
+                periodo_facturado: {
+                    desde: "01/07/2016",
+                    hasta: "31/07/2016"
+                },
+                fecha_vto_pago: "27/09/2016",
+                datosDelaEmpresa: {
+                    razon_social: "",
+                    domicilio_comercial: "",
+                    condicion_frente_IVA: "IVA Responsable Inscripto",
+                    CUIT: "",
+                    ingresos_brutos: "",
+                    fecha_inicio_act: "01/01/1980"
+                },
+                datos_clientes: {
+                    CUIT: "",
+                    razon_social: "INSTITUTO NACIONAL DE SERVICIOS SOCIALES PARA JUBILADOS ",
+                    domicilio: "Peru 169 - Capital Federal, ciudad de Bs As"
+                },
+                detalles: [
+                    { codigo: "01", producto: "CAPITA SALIDMENTAL PERIODO 05/16", cantidad: 1.00, U_medida: "otras unidades", bonif: 0.00, imp_bonif: 0.00, precio: 264002 },
+                    { codigo: "02", producto: "AJUSTE COMPLEMENTARIO 02/16", cantidad: 1.00, U_medida: "otras unidades", bonif: 0.00, imp_bonif: 0.00, precio: 8016 },
+                    { codigo: "03", producto: "AJUSTE COMPLEMENTARIO 03/16", cantidad: 1.00, U_medida: "otras unidades", bonif: 0.00, imp_bonif: 0.00, precio: 7575.66 }
+                ],
+                totales: {
+                    subtotal: 336583, 
+                    importe_otrs_tributos: 0.00, 
+                    importe_total: 336583 
+                }
+            }
+        }
+    }
 
     class Formulario_AFIP extends HTMLElement {
+        constructor(dataAFIP_object) {
+            super();
+            this.afip_data = dataAFIP_object; 
 
-        constructor() {
+            this.h1 = document.createElement("h1");
+            this.h1.textContent = "Formulario AFIP";
 
-            super()
-            this.h1 = document.createElement("h1")
-            this.h1.textContent = "Formulario AFIP"
+            this.form = document.createElement("form");
 
-            this.form = document.createElement("form")
-            this.label_razonSocial = document.createElement("label")
-            this.input_razonSocial = document.createElement("input")
+            this.label_razonSocial = document.createElement("label");
+            this.input_razonSocial = document.createElement("input");
+            this.label_razonSocial.textContent = "Razon social: ";
+            this.label_razonSocial.htmlFor = "razon_social";
+            this.input_razonSocial.id = "razon_social";
+            this.input_razonSocial.type = "text";
+            this.input_razonSocial.name = "razon_social";
 
-            this.label_razonSocial.textContent = "Razon social: "
-            this.label_razonSocial.htmlFor = "razon_social"
-            this.input_razonSocial.id = "razon_social"
-            this.input_razonSocial.type = "text"
-            this.input_razonSocial.name = "razon_social"
+            this.label_domicilioComercial = document.createElement("label");
+            this.input_domicilioComercial = document.createElement("input");
+            this.label_domicilioComercial.textContent = "Domicilio Comercial: ";
+            this.label_domicilioComercial.htmlFor = "dom_comercial";
+            this.input_domicilioComercial.id = "dom_comercial";
+            this.input_domicilioComercial.type = "text";
+            this.input_domicilioComercial.name = "dom_comercial";
 
-            this.label_domicilioComercial = document.createElement("label")
-            this.input_domicilioComercial = document.createElement("input")
+            this.label_CUIT = document.createElement("label");
+            this.input_CUIT = document.createElement("input");
+            this.label_CUIT.textContent = "CUIT: ";
+            this.label_CUIT.htmlFor = "cuit";
+            this.input_CUIT.id = "cuit";
+            this.input_CUIT.type = "text"; 
+            this.input_CUIT.name = "cuit";
 
-            this.label_domicilioComercial.textContent = "Domicilio Comercial: "
-            this.label_domicilioComercial.htmlFor = "dom_comercial"
-            this.input_domicilioComercial.id = "dom_comercial"
-            this.input_domicilioComercial.type = "text"
-            this.input_domicilioComercial.name = "dom_comercial"
+            this.label_ingresosBrutos = document.createElement("label");
+            this.input_ingresosBrutos = document.createElement("input");
+            this.label_ingresosBrutos.textContent = "Ingresos Brutos: ";
+            this.label_ingresosBrutos.htmlFor = "ingr_brutos";
+            this.input_ingresosBrutos.id = "ingr_brutos";
+            this.input_ingresosBrutos.type = "text"; 
+            this.input_ingresosBrutos.name = "ingr_brutos";
 
+            this.bttn = document.createElement("button");
+            this.bttn.textContent = "Generar Factura";
+            this.bttn.type = "submit";
 
-            this.label_CUIT = document.createElement("label")
-            this.input_CUIT = document.createElement("input")
+            this.br1 = document.createElement("br");
+            this.br2 = document.createElement("br");
+            this.br3 = document.createElement("br");
+            this.br4 = document.createElement("br");
 
-            this.label_CUIT.textContent = "CUIT: "
-            this.label_CUIT.htmlFor = "cuit"
-            this.input_CUIT.id = "cuit"
-            this.input_CUIT.type = "number"
-            this.input_CUIT.name = "cuit"
-
-
-            this.label_ingresosBrutos = document.createElement("label")
-            this.input_ingresosBrutos = document.createElement("input")
-
-            this.label_ingresosBrutos.textContent = "Ingresos Brutos: "
-            this.label_ingresosBrutos.htmlFor = "ingr brutos"
-            this.input_ingresosBrutos.id = "ingr brutos"
-            this.input_ingresosBrutos.type = "number"
-            this.input_ingresosBrutos.name = "ingr_brutos"
-
-
-            this.label_perid_fact_desde = document.createElement("label")
-            this.input_perid_fact_desde = document.createElement("input")
-
-            this.label_perid_fact_desde.textContent = "Periodo facturación desde: "
-            this.label_perid_fact_desde.htmlFor = "perid fact"
-            this.input_perid_fact_desde.id = "perid fact"
-            this.input_perid_fact_desde.type = "date"
-            this.input_perid_fact_desde.name = "period_fact_desde"
-
-
-            this.label_perid_fact_hasta = document.createElement("label")
-            this.input_perid_fact_hasta = document.createElement("input")
-
-            this.label_perid_fact_hasta.textContent = "Periodo facturación hasta: "
-            this.label_perid_fact_hasta.htmlFor = "perid fact"
-            this.input_perid_fact_hasta.id = "perid fact"
-            this.input_perid_fact_hasta.type = "date"
-            this.input_perid_fact_hasta.name = "period_fact_hasta"
-
-
-            this.label_fech_vcto_pago = document.createElement("label")
-            this.input_fech_vcto_pago = document.createElement("input")
-
-            this.label_fech_vcto_pago.textContent = "Fecha vcto. para el pago: "
-            this.label_fech_vcto_pago.htmlFor = "vcto pago"
-            this.input_fech_vcto_pago.id = "vcto pago"
-            this.input_fech_vcto_pago.type = "date"
-            this.input_fech_vcto_pago.name = "fecha_vcto_pago"
-
-            this.bttn = document.createElement("button")
-            this.bttn.textContent = "Generar Factura"
-            this.bttn.type = "submit"
-
-
-            this.br1 = document.createElement("br")
-            this.br2 = document.createElement("br")
-            this.br3 = document.createElement("br")
-            this.br4 = document.createElement("br")
-            this.br5 = document.createElement("br")
-            this.br6 = document.createElement("br")
-            this.br7 = document.createElement("br")
-
-            this.appendChild(this.h1)
-
-            this.form.appendChild(this.label_razonSocial)
-            this.form.appendChild(this.input_razonSocial)
-            this.form.appendChild(this.br1)
-            this.form.appendChild(this.label_domicilioComercial)
-            this.form.appendChild(this.input_domicilioComercial)
-            this.form.appendChild(this.br2)
-            this.form.appendChild(this.label_CUIT)
-            this.form.appendChild(this.input_CUIT)
-            this.form.appendChild(this.br3)
-            this.form.appendChild(this.label_ingresosBrutos)
-            this.form.appendChild(this.input_ingresosBrutos)
-            this.form.appendChild(this.br4)
-            this.form.appendChild(this.label_perid_fact_desde)
-            this.form.appendChild(this.input_perid_fact_desde)
-            this.form.appendChild(this.br5)
-            this.form.appendChild(this.label_perid_fact_hasta)
-            this.form.appendChild(this.input_perid_fact_hasta)
-            this.form.appendChild(this.br6)
-            this.form.appendChild(this.label_fech_vcto_pago)
-            this.form.appendChild(this.input_fech_vcto_pago)
-            this.form.appendChild(this.br7)
-            this.form.appendChild(this.bttn)
-            this.appendChild(this.form)
-
-
-
+            this.appendChild(this.h1);
+            this.form.appendChild(this.label_razonSocial);
+            this.form.appendChild(this.input_razonSocial);
+            this.form.appendChild(this.br1);
+            this.form.appendChild(this.label_domicilioComercial);
+            this.form.appendChild(this.input_domicilioComercial);
+            this.form.appendChild(this.br2);
+            this.form.appendChild(this.label_CUIT);
+            this.form.appendChild(this.input_CUIT);
+            this.form.appendChild(this.br3);
+            this.form.appendChild(this.label_ingresosBrutos);
+            this.form.appendChild(this.input_ingresosBrutos);
+            this.form.appendChild(this.br4);
+            this.form.appendChild(this.bttn);
+            this.appendChild(this.form);
         }
 
         getData(event) {
+            event.preventDefault();
+            const formdata = new FormData(this.form);
+            const data = Object.fromEntries(formdata);
 
-            event.preventDefault()
+            this.afip_data.data.datosDelaEmpresa.razon_social = data.razon_social;
+            this.afip_data.data.datosDelaEmpresa.domicilio_comercial = data.dom_comercial;
+            this.afip_data.data.datosDelaEmpresa.CUIT = data.cuit;
+            this.afip_data.data.datosDelaEmpresa.ingresos_brutos = data.ingr_brutos;
 
-            const formdata = new FormData(this.form)
-
-            const data = Object.fromEntries(formdata)
-
-            this.sendDataPDF(data)
-
+            this.sendDataPDF();
         }
 
-        sendDataPDF(data) {
-            console.log(data)
+        sendDataPDF() {
+            const doc = new window.jspdf.jsPDF();
+            const infoFactura = this.afip_data.data; // Atajo para no escribir tanto código
 
-            const doc = new window.jspdf.jsPDF()
+            doc.setFontSize(16);
+            doc.text(`FACTURA ${infoFactura.tipo_factura}`, 80, 15);
+            doc.setFontSize(10);
+            doc.text(`Nro. Comp: ${infoFactura.nro_compr} - Punto Venta: ${infoFactura.punto_de_vente}`, 80, 22);
 
-            doc.setFontSize(16)
-            doc.text("ORIGINAL", 80, 10)
-            doc.text("FACTURA", 130, 20)
-            // Cada campo con su propia línea Y
-            doc.setFontSize(12)
-            doc.text("Razon social: ", 20, 40)
-            doc.text(data.razon_social, 50, 40)
-
-            doc.text("Domic. comercial: ", 20, 50)
-            doc.text(data.dom_comercial, 60, 50)
-
-            doc.text("CUIT: ", 130, 40)
-            doc.text(data.cuit, 150, 40)
-
-            doc.text("Ingresos Brutos: ", 130, 50)
-            doc.text(data.ingr_brutos, 170, 50)
-
-            doc.text("Periodo fact. desde: ", 20, 60)
-            doc.text(data.period_fact_desde, 60, 60)
-
-            doc.text("hasta: ", 87, 60)
-            doc.text(data.period_fact_hasta, 100, 60)
-
-            doc.text("Fecha vcto. pago: ", 127, 60)
-            doc.text(data.fecha_vcto_pago, 167, 60)
-
+            doc.setFontSize(12);
+            doc.text("EMISOR (Datos de la Empresa):", 20, 35);
+            doc.setFontSize(10);
+            doc.text(`Razon social: ${infoFactura.datosDelaEmpresa.razon_social}`, 20, 43);
+            doc.text(`Domic. comercial: ${infoFactura.datosDelaEmpresa.domicilio_comercial}`, 20, 49);
+            doc.text(`CUIT: ${infoFactura.datosDelaEmpresa.CUIT}`, 130, 43);
+            doc.text(`Ingresos Brutos: ${infoFactura.datosDelaEmpresa.ingresos_brutos}`, 130, 49);
+            
             doc.autoTable({
-                startY: 80,
+                startY: 65,
                 head: [["Codigo", "Producto/Servicio", "Cantidad", "U.Medida", "% Bonif", "Imp. Bonif.", "Subtotal"]],
-                body: [
-                    ["", "UGL 6- CAPITA SALUD MENTAL PERIODO 06/16", "1,00", "otras unidades", "264002.11", "0.00", "0.00"],
-                    ["", "Ajuste complementario -02/16", "1,00", "otras unidades", "8016.22", "0.00", "0.00"],
-                    ["", "Ajuste complementario -03/16", "1,00", "otras unidades", "7575.66", "0.00", "0.00"]
-                ]
-            })
+                body: infoFactura.detalles.map((elemento) => {
+                    return [
+                        elemento.codigo,
+                        elemento.producto,
+                        elemento.cantidad,
+                        elemento.U_medida,
+                        elemento.bonif,
+                        elemento.imp_bonif,
+                        elemento.precio 
+                    ];
+                })
+            });
 
-            doc.save("facturaAFIP.pdf")
+            // Agregamos los totales al final de la tabla de forma automática
+            let finalY = doc.lastAutoTable.finalY;
+            doc.text(`Subtotal: $ ${infoFactura.totales.subtotal}`, 140, finalY + 15);
+            doc.text(`Importe Total: $ ${infoFactura.totales.importe_total}`, 140, finalY + 22);
+
+            doc.save("facturaAFIP.pdf");
         }
 
         connectedCallback() {
-
-            this.form.onsubmit = this.getData.bind(this)
+            this.form.onsubmit = this.getData.bind(this);
         }
 
-
-        disconnectCallback() {
-
-            this.form.onsubmit = null
+        disconnectedCallback() {
+            this.form.onsubmit = null;
         }
-
-
     }
 
-
-    customElements.define("form-afip", Formulario_AFIP)
-
+    customElements.define("form-afip", Formulario_AFIP);
 
     function main() {
-
-        const formAFIP = new Formulario_AFIP()
-        document.body.appendChild(formAFIP)
-
-
+        const dataAFIP_object = new AFIP_Data();
+        const formAFIP = new Formulario_AFIP(dataAFIP_object);
+        document.body.appendChild(formAFIP);
     }
 
-
-    window.onload = main
-
+    window.onload = main;
 </script>
-
 
 </html>
