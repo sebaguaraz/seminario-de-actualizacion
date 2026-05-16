@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+</body>
+
+<script>
+    class Data_Meteorologico {
+        constructor() {
+            this.meses = [
+                // Corregido "temp_max_abs" en todos los meses para que coincida
+                { name: "Enero", "Temp Max Abs": 42.4, "Temp Max Media": 26.3, "Temp Media": 20.3, "Temp Min Media": 14.3, "Temp Min Abs": 4.7, "Precipitacion Total": 100.1, "Dias Precipitacion": 9, "Horas Sol": 288.3, "Humedad Relativa": 76 },
+                { name: "Febrero", "Temp Max Abs": 38.1, "Temp Max Media": 25.8, "Temp Media": 19.9, "Temp Min Media": 14.1, "Temp Min Abs": 1.2, "Precipitacion Total": 72.8, "Dias Precipitacion": 8, "Horas Sol": 234.5, "Humedad Relativa": 77 },
+                { name: "Marzo", "Temp Max Abs": 36.3, "Temp Max Media": 23.7, "Temp Media": 18.0, "Temp Min Media": 12.5, "Temp Min Abs": 1.9, "Precipitacion Total": 107.0, "Dias Precipitacion": 9, "Horas Sol": 232.5, "Humedad Relativa": 79 },
+                { name: "Abril", "Temp Max Abs": 32.5, "Temp Max Media": 20.5, "Temp Media": 14.6, "Temp Min Media": 9.1, "Temp Min Abs": -1.0, "Precipitacion Total": 73.3, "Dias Precipitacion": 9, "Horas Sol": 195.0, "Humedad Relativa": 81 },
+                { name: "Mayo", "Temp Max Abs": 27.4, "Temp Max Media": 16.8, "Temp Media": 11.3, "Temp Min Media": 6.4, "Temp Min Abs": -3.0, "Precipitacion Total": 73.5, "Dias Precipitacion": 9, "Horas Sol": 167.4, "Humedad Relativa": 83 },
+                { name: "Junio", "Temp Max Abs": 22.2, "Temp Max Media": 13.8, "Temp Media": 8.5, "Temp Min Media": 4.1, "Temp Min Abs": -5.5, "Precipitacion Total": 54.9, "Dias Precipitacion": 9, "Horas Sol": 120.0, "Humedad Relativa": 84 },
+                { name: "Julio", "Temp Max Abs": 27.7, "Temp Max Media": 13.1, "Temp Media": 8.1, "Temp Min Media": 3.8, "Temp Min Abs": -9.3, "Precipitacion Total": 58.9, "Dias Precipitacion": 9, "Horas Sol": 127.1, "Humedad Relativa": 81 },
+                { name: "Agosto", "Temp Max Abs": 24.7, "Temp Max Media": 14.4, "Temp Media": 8.9, "Temp Min Media": 4.0, "Temp Min Abs": -6.4, "Precipitacion Total": 64.0, "Dias Precipitacion": 8, "Horas Sol": 164.3, "Humedad Relativa": 81 },
+                { name: "Septiembre", "Temp Max Abs": 28.8, "Temp Max Media": 16.0, "Temp Media": 10.5, "Temp Min Media": 5.3, "Temp Min Abs": -5.5, "Precipitacion Total": 56.4, "Dias Precipitacion": 7, "Horas Sol": 174.0, "Humedad Relativa": 80 },
+                { name: "Octubre", "Temp Max Abs": 34.4, "Temp Max Media": 18.5, "Temp Media": 13.1, "Temp Min Media": 7.6, "Temp Min Abs": -3.0, "Precipitacion Total": 83.4, "Dias Precipitacion": 10, "Horas Sol": 210.8, "Humedad Relativa": 80 },
+                { name: "Noviembre", "Temp Max Abs": 35.7, "Temp Max Media": 21.7, "Temp Media": 15.9, "Temp Min Media": 10.1, "Temp Min Abs": -2.0, "Precipitacion Total": 75.3, "Dias Precipitacion": 10, "Horas Sol": 222.0, "Humedad Relativa": 77 },
+                { name: "Diciembre", "Temp Max Abs": 39.4, "Temp Max Media": 24.4, "Temp Media": 18.5, "Temp Min Media": 12.7, "Temp Min Abs": -0.2, "Precipitacion Total": 104.0, "Dias Precipitacion": 10, "Horas Sol": 269.7, "Humedad Relativa": 76 },
+
+                { name: "Anual", "Temp Max Abs": 39.4, "Temp Max Media": 19.6, "Temp Media": 14.0, "Temp Min Media": 8.7, "Temp Min Abs": -9.3, "Precipitacion Total": 923.6, "Dias Precipitacion": 107, "Horas Sol": 2405.6, "Humedad Relativa": 80 }
+            ]
+        }
+    }
+
+    class Meteorologico extends HTMLElement {
+        constructor(object_data) {
+            super();
+            this.data = object_data;
+            this.table = document.createElement("table");
+            this.appendChild(this.table);
+
+            this.btt = document.createElement("button");
+            this.btt.type = "button";
+            this.btt.textContent = "Promedio de temperaturas anuales";
+            this.appendChild(this.btt);
+        }
+
+        showHeader() {
+            this.tr = document.createElement("tr");
+            this.th_mes = document.createElement("th");
+            this.th_mes.textContent = "Mes";
+
+            this.tr.appendChild(this.th_mes);
+
+
+            // Encabezados de la tabla con los nombres de las columnas
+
+            this.data.meses.forEach(element => {
+                const th = document.createElement("th");
+                th.textContent = element.name;
+                th.classList.add("tdata");
+                this.tr.appendChild(th);
+            });
+
+            this.table.appendChild(this.tr);
+
+        }
+
+        showBody() {
+
+            const propiedades = ["Temp Max Abs", "Temp Max Media", "Temp Media", "Temp Min Media", "Temp Min Abs", "Precipitacion Total", "Dias Precipitacion", "Horas Sol", "Humedad Relativa"];
+
+            for (const element of propiedades) {
+                const row = document.createElement("tr");
+                row.classList.add("tdata");
+                const td1 = document.createElement("td");
+                td1.textContent = element;
+                td1.classList.add("tdata");
+                row.appendChild(td1);
+                // RECORRER EL ARRAY ELEMENTO POR ELEMENTO
+                for (const mes of this.data.meses) {
+
+                    const tdAux = document.createElement("td");
+
+                    tdAux.textContent = mes[element];
+                    row.appendChild(tdAux);
+                    tdAux.classList.add("tdata");
+
+                }
+                this.table.appendChild(row);
+            }
+
+        }
+
+
+        showAveragesTemp() {
+
+            const div = document.createElement("div");
+
+            const p = document.createElement("p");
+            let meses = this.data.meses.filter(element => element.name != "meses");
+            console.log(meses);
+
+            const temperaturas = [
+                "Temp Max Abs",
+                "Temp Max Media",
+                "Temp Media",
+                "Temp Min Media",
+                "Temp Min Abs"
+            ];
+
+            let aux = ""
+            for (const temp of temperaturas) {
+                let suma = 0;
+                for (const mes of meses) {
+                    suma += mes[temp];
+                }
+
+                let promedio = suma / meses.length;
+                aux += "<br>" + temp + ": " + promedio + "<br>";
+
+            }
+
+            p.innerHTML = aux;
+            div.appendChild(p);
+            this.appendChild(div);
+
+        }
+
+
+
+        connectedCallback() {
+
+            this.btt.onclick = this.showAveragesTemp.bind(this);
+
+            this.showHeader();
+
+            this.showBody();
+
+
+        }
+
+
+        disconnectedCallback() {
+            this.btt.onclick = null;
+        }
+
+
+    }
+
+    customElements.define("meteorologico-x", Meteorologico);
+
+    function main() {
+        const object_data = new Data_Meteorologico()
+        const meteorologico = new Meteorologico(object_data);
+        document.body.appendChild(meteorologico);
+    }
+
+    window.onload = main;
+</script>
+
+</html>

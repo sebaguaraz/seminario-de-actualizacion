@@ -1,0 +1,19 @@
+table {
+    border-collapse: collapse; /* Quita los espacios dobles del navegador */
+    margin-top: 20px;
+}
+
+th {
+    border-bottom: 2px solid #000000; /* Línea gruesa debajo del encabezado */
+    padding: 12px 8px;
+    text-align: left; /* Alineado a la izquierda como la imagen */
+    font-weight: bold;
+}
+
+td {
+    border-bottom: 1px solid #dbdbdb; /* Línea fina gris entre filas */
+    padding: 12px 8px;
+    text-align: left; /* Alineado a la izquierda */
+}
+
+
