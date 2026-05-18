@@ -1,19 +1,111 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 24px;
+}
+
+meteorologico-x {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #9f9f9f;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
 table {
-    border-collapse: collapse; /* Quita los espacios dobles del navegador */
-    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 
-th {
-    border-bottom: 2px solid #000000; /* Línea gruesa debajo del encabezado */
-    padding: 12px 8px;
-    text-align: left; /* Alineado a la izquierda como la imagen */
-    font-weight: bold;
-}
-
+th,
 td {
-    border-bottom: 1px solid #dbdbdb; /* Línea fina gris entre filas */
-    padding: 12px 8px;
-    text-align: left; /* Alineado a la izquierda */
+    border: 1px solid #b8b8b8;
+    padding: 10px 8px;
+    text-align: center;
 }
 
+.corner-header,
+.month-header {
+    background: #e6e6e6;
+    font-weight: 700;
+}
 
+.row-label {
+    background: #efefef;
+    color: #0f4fa8;
+    font-weight: 700;
+    min-width: 130px;
+}
+
+.temp-max-abs .value-cell,
+.temp-max-abs .annual-cell {
+    background: #d7191c;
+    color: #ffffff;
+}
+
+.temp-max-media .value-cell,
+.temp-max-media .annual-cell {
+    background: #f58a1f;
+    color: #111111;
+}
+
+.temp-media .value-cell,
+.temp-media .annual-cell {
+    background: #f7b65b;
+    color: #111111;
+}
+
+.temp-min-media .value-cell,
+.temp-min-media .annual-cell {
+    background: #fff58c;
+    color: #111111;
+}
+
+.temp-min-abs .value-cell,
+.temp-min-abs .annual-cell {
+    background: #d9ecff;
+    color: #111111;
+}
+
+.precipitacion-total .value-cell,
+.precipitacion-total .annual-cell {
+    background: #787cf0;
+    color: #ffffff;
+}
+
+.dias-precipitacion .value-cell,
+.dias-precipitacion .annual-cell {
+    background: #bfdcf6;
+    color: #111111;
+}
+
+.horas-sol .value-cell,
+.horas-sol .annual-cell {
+    background: #ead768;
+    color: #111111;
+}
+
+.humedad-relativa .value-cell,
+.humedad-relativa .annual-cell {
+    background: #1e25d8;
+    color: #ffffff;
+}
+
+.annual-header {
+    background: #d7191c;
+    color: #ffffff;
+}
+
+button {
+    margin: 16px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #0f4fa8;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0b3d81;
+}
