@@ -185,15 +185,15 @@
                 "Humedad Relativa": "humedad-relativa"
             };
 
-            for (const element of propiedades) {
+            for (const prop of propiedades) {
 
                 const row = document.createElement("tr");
 
-                row.classList.add("tdata", estiloFilas[element]);
+                row.classList.add("tdata", estiloFilas[prop]);
 
                 const td1 = document.createElement("td");
 
-                td1.textContent = element;
+                td1.textContent = prop;
                 td1.classList.add("tdata", "row-label");
 
                 row.appendChild(td1);
@@ -203,16 +203,16 @@
                     let aux_Value = null
                     const td = document.createElement("td");
 
-                    if (element.includes("Temp")) {
+                    if (prop.includes("Temp")) {
                         if (this.is_Celcius) {
-                            aux_Value = `${mes[element]}°C`
+                            aux_Value = `${mes[prop]}°C`
                         }
                         else {
-                            aux_Value = `${(mes[element] * 1.8) + 32}°F`
+                            aux_Value = `${(mes[prop] * 1.8) + 32}°F`
                         }
 
                     } else {
-                        aux_Value = mes[element]
+                        aux_Value = mes[prop]
                     }
 
                     td.textContent = aux_Value;
