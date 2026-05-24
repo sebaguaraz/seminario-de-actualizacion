@@ -47,8 +47,11 @@
             this.btt.type = "button";
             this.btt.textContent = "Promedio de temperaturas anuales";
             this.appendChild(this.btt);
-            this.div = document.createElement("div");
-            this.appendChild(this.div);
+
+
+            this.showHeader();
+
+            this.showBody();
         }
 
         showHeader() {
@@ -125,37 +128,37 @@
 
         showAveragesTemp() {
 
-            this.div.textContent = "";
-            
-            const p = document.createElement("p");
 
-            let aux = ""
             let acumulador = 0;
-
+            
             const propiedades = ["Temp Max Abs", "Temp Max Media", "Temp Media", "Temp Min Media", "Temp Min Abs"];
 
             const meses = this.data.meses.filter(mes => mes.name !== "Anual");
 
+            const div = document.createElement("div");
             let promedio = 0;
-
+            
             for (let prop of propiedades) {
-
+                
                 acumulador = 0
-
+                
                 for (const element of meses) {
-
-
+                    
                     acumulador += element[prop];
-
-                    promedio = acumulador / meses.length;
-
-
+                    
                 }
-                aux += "<br>" + prop + ": " + promedio + "<br>";
+                promedio = acumulador / meses.length;
+                
+                const span = document.createElement("span")
+                span.innerText = `${prop}:  ${promedio}`;
+                const br1 = document.createElement("br");
+                const br2 = document.createElement("br");
+                div.appendChild(br1);
+                div.appendChild(span);
+                div.appendChild(br2);
             }
-            p.innerHTML = aux;
-
-            this.div.appendChild(p);
+            
+            this.appendChild(div);
 
         }
 
@@ -165,9 +168,7 @@
 
             this.btt.onclick = this.showAveragesTemp.bind(this);
 
-            this.showHeader();
 
-            this.showBody();
 
 
         }

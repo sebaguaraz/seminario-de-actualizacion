@@ -92,13 +92,16 @@
         }
 
 
-        disconnectCallback() { }
+        disconnectCallback() {
+        
+            this.form.onsubmit = null
+        }
     };
 
 
     customElements.define("user-form", UserForm);
 
-    const main = () => {
+    function main() {
         const form_user = new UserForm()
         document.body.appendChild(form_user);
     }

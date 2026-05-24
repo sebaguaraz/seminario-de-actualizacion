@@ -60,6 +60,9 @@
             this.appendChild(this.bttn_change_temp);
 
             this.newList = [];
+
+            this.showHeader();
+            this.renderTable()
         }
 
         showHeader() {
@@ -172,6 +175,9 @@
 
 
         renderTable() {
+            // 1. Limpiar la tabla antes de volver a renderizar (evita que se dupliquen las filas)
+            this.table.textContent = "";
+
             const propiedades = ["Temp Max Abs", "Temp Max Media", "Temp Media", "Temp Min Media", "Temp Min Abs", "Precipitacion Total", "Dias Precipitacion", "Horas Sol", "Humedad Relativa"];
             const estiloFilas = {
                 "Temp Max Abs": "temp-max-abs",
@@ -186,45 +192,41 @@
             };
 
             for (const prop of propiedades) {
-
                 const row = document.createElement("tr");
-
                 row.classList.add("tdata", estiloFilas[prop]);
 
                 const td1 = document.createElement("td");
-
                 td1.textContent = prop;
                 td1.classList.add("tdata", "row-label");
-
                 row.appendChild(td1);
-                // RECORRER EL ARRAY ELEMENTO POR ELEMENTO
-                for (const mes of this.data.meses) {
 
-                    let aux_Value = null
+                for (const mes of this.data.meses) {
                     const td = document.createElement("td");
+                    td.classList.add("tdata", "value-cell");
+
+                    let aux_Value = "";
 
                     if (prop.includes("Temp")) {
-                        if (this.is_Celcius) {
-                            aux_Value = `${mes[prop]}°C`
-                        }
-                        else {
-                            aux_Value = `${(mes[prop] * 1.8) + 32}°F`
-                        }
+                        // Obtenemos el valor original (siempre en Celsius)
+                        let valorOriginal = mes[prop];
 
+                        if (this.is_Celcius) {
+                            aux_Value = `${valorOriginal.toFixed(1)}°C`;
+                        } else {
+                            let fahrenheit = (valorOriginal * 1.8) + 32;
+                            aux_Value = `${fahrenheit.toFixed(1)}°F`;
+                        }
                     } else {
-                        aux_Value = mes[prop]
+                        aux_Value = mes[prop];
                     }
 
                     td.textContent = aux_Value;
-                    td.classList.add("tdata", "value-cell");
-
                     row.appendChild(td);
-
                 }
                 this.table.appendChild(row);
             }
-
         }
+
 
         change_Conversion() {
 
@@ -249,15 +251,13 @@
             this.btt_averages.onclick = this.showAveragesTemp.bind(this);
             this.bttn_change_temp.onclick = this.change_Conversion.bind(this)
 
-            this.showHeader();
 
-
-            this.renderTable()
         }
 
 
         disconnectedCallback() {
             this.btt_averages.onclick = null;
+            this.bttn_change_temp.onclick = null
         }
 
 
