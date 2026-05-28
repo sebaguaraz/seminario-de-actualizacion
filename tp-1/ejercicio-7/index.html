@@ -33,8 +33,54 @@
 
                 { name: "Anual", "Temp Max Abs": 39.4, "Temp Max Media": 19.6, "Temp Media": 14.0, "Temp Min Media": 8.7, "Temp Min Abs": -9.3, "Precipitacion Total": 923.6, "Dias Precipitacion": 107, "Horas Sol": 2405.6, "Humedad Relativa": 80 }
             ]
+
+            this.is_Celcius = true;
+
         }
+
+        convertToCelcius() {
+            if (this.is_Celcius) return;
+
+            const propiedades = ["Temp Max Abs", "Temp Max Media", "Temp Media", "Temp Min Media", "Temp Min Abs"];
+
+            for (const prop of propiedades) {
+
+                for (const mes of this.meses) {
+                    mes[prop] = (mes[prop] - 32) / 1.8;
+
+                }
+            }
+
+            this.is_Celcius = true
+
+        }
+
+
+        convertToFahrenheit() {
+            if (!this.is_Celcius) return;
+
+            const propiedades = ["Temp Max Abs", "Temp Max Media", "Temp Media", "Temp Min Media", "Temp Min Abs"];
+
+            for (const prop of propiedades) {
+
+                for (const mes of this.meses) {
+
+                    mes[prop] = ((mes[prop] * 1.8) + 32);
+
+                }
+            }
+
+            this.is_Celcius = false
+
+        }
+
+
     }
+
+
+
+
+
 
     class Meteorologico extends HTMLElement {
         constructor(object_data) {
@@ -53,13 +99,10 @@
             this.div = document.createElement("div");
             this.appendChild(this.div);
 
-            this.is_Celcius = true;
             this.bttn_change_temp = document.createElement("button");
             this.bttn_change_temp.type = "button";
             this.bttn_change_temp.textContent = "Alternar Temperaturas";
             this.appendChild(this.bttn_change_temp);
-
-            this.newList = [];
 
             this.showHeader();
             this.renderTable()
@@ -139,9 +182,7 @@
 
         showAveragesTemp() {
 
-            this.div.textContent = "";
-
-            const p = document.createElement("p");
+            const div = document.createElement("div");
 
             let aux = ""
             let acumulador = 0;
@@ -160,19 +201,23 @@
 
 
                     acumulador += element[prop];
-
-                    promedio = acumulador / meses.length;
-
-
                 }
-                aux += "<br>" + prop + ": " + promedio + "<br>";
-            }
-            p.innerHTML = aux;
+                promedio = acumulador / meses.length;
 
-            this.div.appendChild(p);
+                aux = `${prop}:  ${promedio}`;
+                const br1 = document.createElement("br");
+                div.appendChild(br1);
+                const span = document.createElement("span");
+                span.innerText = aux;
+                const br2 = document.createElement("br");
+                div.appendChild(span);
+                div.appendChild(br2);
+            }
+            this.appendChild(div);
+
+
 
         }
-
 
         renderTable() {
             // 1. Limpiar la tabla antes de volver a renderizar (evita que se dupliquen las filas)
@@ -204,23 +249,7 @@
                     const td = document.createElement("td");
                     td.classList.add("tdata", "value-cell");
 
-                    let aux_Value = "";
-
-                    if (prop.includes("Temp")) {
-                        // Obtenemos el valor original (siempre en Celsius)
-                        let valorOriginal = mes[prop];
-
-                        if (this.is_Celcius) {
-                            aux_Value = `${valorOriginal.toFixed(1)}°C`;
-                        } else {
-                            let fahrenheit = (valorOriginal * 1.8) + 32;
-                            aux_Value = `${fahrenheit.toFixed(1)}°F`;
-                        }
-                    } else {
-                        aux_Value = mes[prop];
-                    }
-
-                    td.textContent = aux_Value;
+                    td.textContent = mes[prop].toFixed(2);
                     row.appendChild(td);
                 }
                 this.table.appendChild(row);
@@ -229,22 +258,16 @@
 
 
         change_Conversion() {
-
-            this.is_Celcius = !this.is_Celcius
-
-            if (this.is_Celcius) {
-                this.bttn_change_temp.textContent = "Ver en Farenheit"
-                this.table.innerText = "";
-                this.showHeader();
-                this.renderTable();
+            if (this.data.is_Celcius) {
+                this.bttn_change_temp.textContent = "Conversion de Fahrenheit";
+                this.data.convertToFahrenheit();
             } else {
-                this.bttn_change_temp.textContent = "Ver en Celcius"
-                this.table.innerText = "";
-                this.showHeader();
-                this.renderTable();
+                this.bttn_change_temp.textContent = "Conversion de Celcius";
+                this.data.convertToCelcius();
             }
-
+            this.renderTable();
         }
+
 
         connectedCallback() {
 
