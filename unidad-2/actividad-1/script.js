@@ -270,6 +270,16 @@ class Controller {
 
     }
 
+    disable() {
+
+        this.view.removeEventListener("request", this.onViewRequest.bind(this))
+
+        this.view.removeEventListener("buttonClick", this.onViewRequestButton.bind(this))
+
+        this.model.removeEventListener("change", this.onModelChange.bind(this))
+
+    }
+
     onModelChange() {
         console.log("cambio el modelo, controlador! avisale a la vista q actualice...")
         const result = this.model.getData()
