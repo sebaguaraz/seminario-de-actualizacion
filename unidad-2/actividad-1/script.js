@@ -258,25 +258,29 @@ class Controller {
         this.view = object_view
         this.model = object_model
 
+        this.function1 = this.onViewRequest.bind(this)
+        this.function2 = this.onViewRequestButton.bind(this)
+        this.function3 = this.onModelChange.bind(this)
+
     }
 
     enable() {
 
-        this.view.addEventListener("request", this.onViewRequest.bind(this))
+        this.view.addEventListener( "request", this.function1 )
 
-        this.view.addEventListener("buttonClick", this.onViewRequestButton.bind(this))
+        this.view.addEventListener("buttonClick", this.function2)
 
-        this.model.addEventListener("change", this.onModelChange.bind(this))
+        this.model.addEventListener("change", this.function3)
 
     }
 
     disable() {
 
-        this.view.removeEventListener("request", this.onViewRequest.bind(this))
+        this.view.removeEventListener("request", this.function1)
 
-        this.view.removeEventListener("buttonClick", this.onViewRequestButton.bind(this))
+        this.view.removeEventListener("buttonClick", this.function2)
 
-        this.model.removeEventListener("change", this.onModelChange.bind(this))
+        this.model.removeEventListener("change", this.function3)
 
     }
 
