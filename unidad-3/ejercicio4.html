@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 4</title>
+</head>
+
+<body>
+
+
+    <script>
+
+        //* 4. Configurar el área de dibujo para tener forma de cuadrado de (500,500)px. Empleando las primitivas de dibujo de arcos de elipse, dibujar círculos concéntricos hasta el centro del área, espaciados en 25px c/u.
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+
+            }
+
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 500
+                this.canvas.height = 500
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+
+                this.appendChild(this.canvas)
+
+            }
+
+            drawCircles(centerX, centerY, anguloI, anguloF, radioMaximo) {
+                let separacion = 25
+                let radioVariante = radioMaximo
+
+                // *mientras el radio disminuya hasta 25px (osea el mas chico), no remarca mas en el LIENZO
+                while (radioMaximo >= radioVariante && radioVariante >= separacion) {
+                    // *por cada circulo hace un BORRADOR NUEVO y lo REMARCA. 
+                    // *de paso el RADIO de cada circulo DISMINUYE a 25
+                    console.log(radioVariante)
+
+                    this.pincel2D.beginPath()
+                    this.pincel2D.arc(centerX, centerY, radioVariante, anguloI, anguloF)
+                    this.pincel2D.closePath()
+                    this.pincel2D.stroke()
+
+                    radioVariante -= separacion
+                }
+
+            }
+
+            render() {
+                //* punto medio del circulo usando X,Y
+                let centerX = this.canvas.width / 2
+                let centerY = this.canvas.height / 2
+
+                let anguloI = 0
+                let anguloF = 2 * Math.PI
+                let radioMaximo = this.canvas.width / 2
+
+                console.log("creando CIRCULOS CONCENTRICOS...");
+
+                this.drawCircles(centerX, centerY, anguloI, anguloF, radioMaximo)
+            }
+
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+
+                this.render()
+
+            }
+            disconnectedCallback() {
+
+            }
+
+            _onSave() {
+
+            }
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+    </script>
+
+</body>
+
+</html>

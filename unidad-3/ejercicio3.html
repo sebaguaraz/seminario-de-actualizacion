@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 3</title>
+</head>
+
+<body>
+
+
+    <script>
+
+        // * 3) Construya una función que le permita dibujar cualquier polígono cerrado ubicado en el centro del área de dibujo, dada una lista ordenada de puntos (x,y).
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+
+            }
+
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 800
+                this.canvas.height = 800
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+
+                this.appendChild(this.canvas)
+
+            }
+
+            drawPoligono(listPoints) {
+
+                this.pincel2D.beginPath()
+                this.pincel2D.moveTo(listPoints[0].x, listPoints[0].y)
+                for (let index = 1; index < listPoints.length; index++) {
+                    console.log(listPoints[index])
+                    this.pincel2D.lineTo(listPoints[index].x, listPoints[index].y)
+                }
+
+                // cierra el dibujo con una linea recta al punto de partida, "MOVETO".....
+                this.pincel2D.closePath()
+
+                this.pincel2D.stroke()
+
+            }
+
+            set value(x) {
+
+            }
+
+            get value() {
+
+            }
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+
+                const centerX = this.canvas.width / 2
+                const centerY = this.canvas.height / 2
+                const despVertical = 60
+                const despHorizontal = 50
+
+                let A = { x: centerX, y: centerY - despVertical }
+                let B = { x: centerX + despHorizontal, y: centerY - despVertical / 2 }
+                let C = { x: centerX + despHorizontal, y: centerY + despVertical }
+                let D = { x: centerX - despHorizontal, y: centerY + despVertical }
+                let E = { x: centerX - despHorizontal, y: centerY - despVertical / 2 }
+
+                let listPoints = [A, B, C, D, E]
+
+                console.log("creado el POLIGONO...");
+
+                this.drawPoligono(listPoints)
+
+            }
+            disconnectedCallback() {
+
+            }
+
+            _onSave() {
+
+            }
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+    </script>
+
+
+</body>
+
+</html>
