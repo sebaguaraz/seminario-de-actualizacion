@@ -40,21 +40,53 @@ class View extends HTMLElement {
         this.buttonClear.type = "button"
         this.buttonClear.textContent = "Limpiar"
 
-        this.buttonAddFigura = document.createElement("button")
-        this.buttonAddFigura.type = "button"
-        this.buttonAddFigura.textContent = "Agregar Figura"
+        this.labelTypeWidth = document.createElement("label")
+        this.labelTypeWidth.textContent = "Grosor de línea: "
+        this.labelTypeWidth.htmlFor = "typeWidth"
+        this.InputTypeWidth = document.createElement("input")
+        this.InputTypeWidth.id = "typeWidth"
+        this.InputTypeWidth.type = "number"
+        this.InputTypeWidth.min = "1"
+        this.InputTypeWidth.max = "100"
+        this.InputTypeWidth.step = "1"
+        this.InputTypeWidth.required = true
 
-        this._figures = []
+        this.labelTypeLine = document.createElement("label")
+        this.labelTypeLine.textContent = "Tipo de línea: "
+        this.labelTypeLine.htmlFor = "typeLine"
+        this.InputTypeLine = document.createElement("select")
+        this.InputTypeLine.id = "typeLine"
+        this.InputTypeLine.value = "1"
+        this.InputTypeLine.required = true
+
+        this.option1 = document.createElement("option")
+        this.option2 = document.createElement("option")
+        this.option3 = document.createElement("option")
+
+        this.option1.textContent = "miter"
+        this.option1.value = "miter"
+        this.option2.textContent = "round"
+        this.option2.value = "round"
+        this.option3.textContent = "bevel"
+        this.option3.value = "bevel"
+
 
         this.appendChild(this._canvas)
         this.appendChild(this.buttonClear)
-        this.appendChild(this.buttonAddFigura)
+
+        this.appendChild(this.labelTypeLine)
+        this.appendChild(this.InputTypeLine)
+        this.InputTypeLine.appendChild(this.option1)
+        this.InputTypeLine.appendChild(this.option2)
+        this.InputTypeLine.appendChild(this.option3)
+        this.appendChild(this.labelTypeWidth)
+        this.appendChild(this.InputTypeWidth)
 
     }
 
-    render(renderFunction) {
+    render(renderFunction, listFigures) {
         this.clear();
-        renderFunction(this._canvas, this.getFigures());
+        renderFunction(this._canvas, listFigures);
     }
 
     clear() {
@@ -62,7 +94,19 @@ class View extends HTMLElement {
     }
 
     askFigure() {
-        this.dispatchEvent(new CustomEvent("ask", { detail: "askFigure" }))
+        let typeLine = String(this.InputTypeLine.value)
+        let typeWidth = Number(this.InputTypeWidth.value)
+        console.log(typeWidth);
+
+        this.dispatchEvent(new CustomEvent("ask",
+            {
+                detail: {
+                    action: "askFigure",
+                    valueLine: typeLine,
+                    valueWidth: typeWidth
+                }
+            }
+        ))
     }
 
     clearView() {
@@ -71,26 +115,15 @@ class View extends HTMLElement {
 
     connectedCallback() {
         // 
-        this.buttonAddFigura.onclick = this.askFigure.bind(this)
         this.buttonClear.onclick = this.clearView.bind(this)
 
     }
 
     disconnectedCallback() {
 
-        this.buttonAddFigura.onclick = null
         this.buttonClear.onclick = null
 
     }
-
-    getFigures() {
-        return this._figures
-    }
-
-    setFigures(figures) {
-        this._figures = figures
-    }
-
 
     setWidth(width) {
         this._canvas.width = width
@@ -120,7 +153,7 @@ class Controller {
         this._view = view;
         this._model = model;
 
-        // * crea una sola instancia de estas funciones en memoria para no perder la referencia al eliminarlas...
+        // * crea una sola variable que guarde una sola vez la referencia a la funcion en memoria para no perderlas al eliminarlas...
         this._onModelChanged = this.onModelChanged.bind(this);
         this._onViewAsk = this.onViewAskToClient.bind(this);
         this._onViewClear = this.onViewClear.bind(this);
@@ -141,8 +174,8 @@ class Controller {
     }
 
     onModelChanged() {
-        let figures = this._model.getFigures()
-        this._view.setFigures(figures)
+        let listFigures = this._model.getFigures()
+        this._view.render(ejercicio12, listFigures)
     }
 
 
@@ -170,18 +203,22 @@ class Controller {
 
     onViewAskToClient(event) {
 
-        if (event.detail === "askFigure") {
+        if (event.detail.action === "askFigure") {
 
             let response = prompt('Ingrese JSON de la figura. Ej: {"tipo":"circulo","x":100,"y":150,"radio":30}');
 
             const result = this.validateJSON(response)
-            console.log(result)
-
-
             if (result === null) {
                 return;
             }
 
+            result.typeWidth = event.detail.valueWidth
+            result.typeLine = event.detail.valueLine
+
+            if (!result.typeWidth || result.typeWidth === 0) {
+                alert("Falta ingresar un valor en el input (Grosor de línea) o el tipo de linea no esta especificado. ")
+                return;
+            }
 
             console.log("datos obtenidos...")
 
