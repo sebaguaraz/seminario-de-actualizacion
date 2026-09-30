@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 9</title>
+</head>
+<body>
+    
+
+<script>
+
+    <!-- //* 9. Construir un muestrario de líneas verticales de grosor creciente, variando desde 1px hasta 25px con un espaciado de 16px entre cada una. Cada línea debe tener el mismo alto del área de dibujo. -->
+    
+    class Model extends EventTarget {
+        constructor() {
+            super();
+    
+        }
+    
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+    }
+    
+    
+    class View extends HTMLElement {
+    
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 500
+            this.canvas.height = 500
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+    
+    
+            this.appendChild(this.canvas)
+    
+        }
+    
+        drawLines(espaciado, grosorMax) {
+    
+            let grosorActualLinea = 1
+            let posicionX = 0
+            let acumuladorDistancia = 0
+    
+            while (grosorActualLinea <= grosorMax) {
+                this.pincel2D.beginPath()
+                this.pincel2D.lineWidth = grosorActualLinea
+                posicionX = grosorActualLinea + espaciado + acumuladorDistancia
+                this.pincel2D.moveTo(posicionX, 0)
+                this.pincel2D.lineTo(posicionX, this.canvas.height)
+    
+                this.pincel2D.stroke()
+    
+    
+                grosorActualLinea += 1
+                acumuladorDistancia = posicionX
+            }
+    
+        }
+    
+        render() {
+    
+            const espaciado = 16
+            const grosorMax = 25
+    
+            this.drawLines(espaciado, grosorMax)
+        }
+    
+        connectedCallback() {
+            console.log('Canvas (lienzo) agregado al DOM...')
+    
+            this.render()
+    
+        }
+    
+        disconnectedCallback() {
+    
+        }
+    
+    }
+    customElements.define('x-view', View);
+    
+    
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('request', this._onViewRequest);
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('request', this._onViewRequest);
+        }
+        onModelChanged() {
+    
+        }
+        onViewRequest(event) {
+    
+        }
+    }
+    
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>    
+
+</body>
+</html>
+

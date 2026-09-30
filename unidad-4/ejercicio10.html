@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 10</title>
+</head>
+
+<body>
+
+
+    <script>
+        // * 10. Dibujar un conjunto de tres líneas quebradas independientes (cada una formada por 3 puntos) aplicando en cada una un estilo diferente de terminación de extremos (butt, round, square) y de unión de esquinas (bevel, round, miter).
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+            }
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 800
+                this.canvas.height = 800
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+
+                this.appendChild(this.canvas)
+
+            }
+
+            drawLines(A, B, C) {
+
+                this.pincel2D.beginPath()
+                this.pincel2D.moveTo(A[0].x, A[0].y)
+                for (let i = 1; i < A.length; i++) {
+
+                    this.pincel2D.lineTo(A[i].x, A[i].y)
+
+                }
+                this.pincel2D.lineCap = 'butt';
+                this.pincel2D.lineJoin = 'bevel';
+                this.pincel2D.lineWidth = 10
+                this.pincel2D.stroke()
+
+
+                this.pincel2D.beginPath()
+                this.pincel2D.moveTo(B[0].x, B[0].y)
+                for (let i = 1; i < B.length; i++) {
+
+                    this.pincel2D.lineTo(B[i].x, B[i].y)
+
+                }
+                this.pincel2D.lineCap = 'round';
+                this.pincel2D.lineJoin = 'round';
+                this.pincel2D.lineWidth = 10
+                this.pincel2D.stroke()
+
+
+                this.pincel2D.beginPath()
+                this.pincel2D.moveTo(C[0].x, C[0].y)
+                for (let i = 1; i < C.length; i++) {
+
+                    this.pincel2D.lineTo(C[i].x, C[i].y)
+
+                }
+                this.pincel2D.lineCap = 'square';
+                this.pincel2D.lineJoin = 'miter';
+                this.pincel2D.lineWidth = 10
+                this.pincel2D.stroke()
+
+            }
+
+            render() {
+
+                let A = [{ x: 100, y: 100 }, { x: 200, y: 50 }, { x: 300, y: 100 }]
+                let B = [{ x: 100, y: 200 }, { x: 200, y: 150 }, { x: 300, y: 200 }]
+                let C = [{ x: 100, y: 300 }, { x: 200, y: 250 }, { x: 300, y: 300 }]
+
+                this.drawLines(A, B, C)
+            }
+
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+
+                this.render()
+
+            }
+
+            disconnectedCallback() {
+
+            }
+
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+
+
+    </script>
+
+
+</body>
+
+</html>

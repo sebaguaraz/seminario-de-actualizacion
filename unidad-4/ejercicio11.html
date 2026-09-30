@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 11</title>
+</head>
+
+<body>
+
+
+    <script>
+        // * 11. Líneas punteadas (setLineDash): Construir una función que dibuje una grilla de líneas diagonales separadas cada 15px, alternando patrones de trazos continuos y punteados.
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+            }
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 800
+                this.canvas.height = 800
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+
+                this.appendChild(this.canvas)
+
+            }
+
+            drawLines() {
+
+                let line = 1
+                // Dibujamos líneas cada 40 píxeles de distancia
+                for (let separacionx = 0; separacionx < this.canvas.width; separacionx += 15) {
+
+                    if (line % 2 === 0) {
+                        this.pincel2D.beginPath();
+                        this.pincel2D.moveTo(separacionx, 0);       // Empieza arriba, moviéndose a la derecha
+                        this.pincel2D.lineTo(separacionx + 100, this.canvas.height); // Termina abajo, un poco más a la derecha
+                        this.pincel2D.setLineDash([])
+                        this.pincel2D.stroke(); // Pinta cada línea del bucle
+
+                    } else {
+                        
+                        this.pincel2D.beginPath();
+                        this.pincel2D.moveTo(separacionx, 0);       // Empieza arriba, moviéndose a la derecha
+                        this.pincel2D.lineTo(separacionx + 100, this.canvas.height); // Termina abajo, un poco más a la derecha
+                        this.pincel2D.setLineDash([10, 5])
+                        this.pincel2D.stroke(); // Pinta todas las líneas del bucle
+                    }
+                    line+=1
+                    
+                }
+
+
+
+            }
+
+            render() {
+
+                this.drawLines()
+            }
+
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+
+                this.render()
+
+            }
+
+            disconnectedCallback() {
+
+            }
+
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+
+
+    </script>
+
+
+</body>
+
+</html>

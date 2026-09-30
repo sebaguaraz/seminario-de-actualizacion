@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Ejercicio 6</title>
+	<meta name="generator" content="Geany 2.0" />
+	<script src="../MVCCanvas.js"></script>
+	<script src="./ejercicio6.js"></script>
+</head>
+
+<body>
+
+</body>
+
+<script>
+
+
+	function main() {
+
+		const myModel = new Model();
+		const myView = new View();
+		const myController = new Controller(myView, myModel);
+		myController.enable();
+
+
+
+		const button6 = document.createElement('button');
+
+		button6.textContent = 'Ejercicio 6: Renderizar figuras';
+
+		button6.onclick = function () {
+
+			myView.render(ejercicio6);
+
+		}
+		
+		document.body.appendChild(myView);
+		document.body.appendChild(button6);
+	}
+
+	window.onload = main;
+
+</script>
+
+</html>

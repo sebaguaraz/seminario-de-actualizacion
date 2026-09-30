@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 1</title>
+</head>
+
+<body>
+
+
+
+    <script>
+
+        // * 1) Construya una función que sea capaz de dibujar una cruz diagonal (cruzando los vértices) de toda el área de dibujo.
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+
+            }
+
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+        class View extends HTMLElement {
+
+            // * se crea el CANVAS dentro del CONSTRUCTOR de componente VISTA
+            constructor() {
+                super()
+                // *creo una instancia de la clase CANVAS y se asigna a la PROP "this.canvas"
+                this.canvas = document.createElement("canvas");
+
+                // *le doy un ALTO Y ANCHO AL LIENZO
+                this.canvas.width = 800
+                this.canvas.height = 600
+                this.canvas.style = "border: 1px solid black"
+
+                // *devuelve un OBJETO con dimension 2D y metodos para dibujar 
+                this.pincel2D = this.canvas.getContext("2d")
+
+                this.drawLine()
+
+                // *agrego el elemento html CANVAS al componente VISTA
+                this.appendChild(this.canvas)
+
+            }
+
+            drawLine() {
+
+                this.pincel2D.beginPath()
+                this.pincel2D.moveTo(0, 0)
+                this.pincel2D.lineTo(this.canvas.width, this.canvas.height)
+                this.pincel2D.moveTo(this.canvas.width, 0)
+                this.pincel2D.lineTo(0, this.canvas.height)
+
+
+                this.pincel2D.closePath()
+                this.pincel2D.stroke()
+
+
+
+
+            }
+
+            set value(x) {
+
+            }
+
+            get value() {
+
+            }
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+            }
+            disconnectedCallback() {
+
+            }
+
+            _onSave() {
+
+            }
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 7</title>
+</head>
+
+<body>
+
+
+
+    <script>
+
+
+        //* 7. Dado un objeto de datos: [ 0.30, 0.50, 0.10, 0.10 ] que representa información porcentual, elaborar una función que procese el array y dibuje la representación visual como un gráfico de torta mostrando el valor del porcentaje como texto.
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+
+            }
+
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 500
+                this.canvas.height = 500
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+
+                this.appendChild(this.canvas)
+
+            }
+
+            drawGraphic(list, colors) {
+                let anguloI = 0
+                let anguloF = null
+                // * tamaña de la porcion del sector
+                let sectorSize = null
+                let posTextY = 100
+                let radio = 100
+                let indiceColor = 0
+
+                let centerX = this.canvas.width / 2
+                let centerY = this.canvas.height / 2
+
+
+                for (const element of list) {
+
+                    this.pincel2D.beginPath()
+                    this.pincel2D.moveTo(centerX, centerY)
+                    sectorSize = element * 2 * Math.PI
+                    anguloF = anguloI + sectorSize
+                    this.pincel2D.arc(centerX, centerY, radio, anguloI, anguloF)
+                    this.pincel2D.closePath()
+
+                    // *define el interior de un color
+                    this.pincel2D.fillStyle = colors[indiceColor]
+                    // *pinta las porciones
+                    this.pincel2D.fill()
+                    // * define el borde de un color
+                    this.pincel2D.strokeStyle = colors[indiceColor]
+                    // * lo pinta
+                    this.pincel2D.strokeText(`${element * 100}%`, 400, posTextY)
+
+                    this.pincel2D.stroke()
+                    anguloI = anguloF
+
+                    posTextY += 30
+                    indiceColor += 1
+                }
+
+            }
+
+            render() {
+
+                let list = [0.30, 0.50, 0.10, 0.10]
+                const colors = ["red", "blue", "green", "orange"]
+
+                this.drawGraphic(list, colors)
+            }
+
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+
+                this.render()
+
+            }
+
+            disconnectedCallback() {
+
+            }
+
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('request', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('request', this._onViewRequest);
+            }
+            onModelChanged() {
+
+            }
+            onViewRequest(event) {
+
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+
+    </script>
+
+</body>
+
+</html>
