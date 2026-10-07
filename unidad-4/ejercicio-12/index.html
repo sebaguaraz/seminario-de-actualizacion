@@ -6,7 +6,6 @@
     <title>Ejercicio 12</title>
     <meta name="generator" content="Geany 2.0" />
     <script src="../MVCCanvas.js"></script>
-    <script src="./ejercicio12.js"></script>
 </head>
 
 <body>
@@ -15,6 +14,8 @@
 
 <script>
 
+    // * 12. Integración: Modificar el modelo del WebComponent integrado (Ej:6), de modo que las figuras gestionadas admitan propiedades de tipo de línea y grosor. Para esto, el componente deberá tener dos inputs para seleccionar el tipo de línea y el valor de grosor. Al hacer click en el botón de carga de figuras, se seguirá aceptando el mismo JSON sin cambios, solo anexará el valor de los inputs a la estructura de datos.
+
     function main() {
 
         const myModel = new Model();
@@ -22,19 +23,13 @@
         const myController = new Controller(myView, myModel);
         myController.enable();
 
-        const button12 = document.createElement('button');
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Ejercicio 12: Pedir figuras';
 
-        button12.textContent = 'Ejercicio 12: Pedir figuras';
-
-        button12.onclick = function () {
-
-            // myView.render(ejercicio12, myModel.getFigures());
-            myView.askFigure()
-        }
-
+        document.body.appendChild(h1);
         document.body.appendChild(myView);
-        document.body.appendChild(button12);
     }
+
 
     window.onload = main;
 

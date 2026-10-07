@@ -6,7 +6,6 @@
 	<title>Ejercicio 6</title>
 	<meta name="generator" content="Geany 2.0" />
 	<script src="../MVCCanvas.js"></script>
-	<script src="./ejercicio6.js"></script>
 </head>
 
 <body>
@@ -15,6 +14,7 @@
 
 <script>
 
+	// * 6) Integración: Modificar el WebComponent de modo que el modelo le permita agregar dinámicamente (círculos y polígonos) ubicables en cualquier punto (x,y) del área de dibujo, como así también, limpiar toda el área de dibujo. El componente tendrá que tener un botón de carga de figuras, que al realizar click, lance un prompt esperando el objeto JSON para representarlo inmediatamente en el canvas. También deberá tener un botón de limpieza.
 
 	function main() {
 
@@ -23,20 +23,12 @@
 		const myController = new Controller(myView, myModel);
 		myController.enable();
 
+		const h1 = document.createElement('h1');
+		h1.textContent = 'Ejercicio 6: Pedir figuras';
 
+		document.body.appendChild(h1);
 
-		const button6 = document.createElement('button');
-
-		button6.textContent = 'Ejercicio 6: Renderizar figuras';
-
-		button6.onclick = function () {
-
-			myView.render(ejercicio6);
-
-		}
-		
 		document.body.appendChild(myView);
-		document.body.appendChild(button6);
 	}
 
 	window.onload = main;
