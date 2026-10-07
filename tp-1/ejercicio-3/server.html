@@ -1,0 +1,134 @@
+<!-- Suponga que se le proporciona un desafío. Construir una aplicación Web para una app eduactiva de geografía, donde se le pide que grafique un mapa de la Argentina y al hacerle click a cada provincia aparezca el dato de su población. Investigue cómo podría desarrollar esto y redacte la manera de cómo podría llevarlo a cabo. -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+
+<script>
+
+    class WCData {
+
+        constructor() {
+
+            this.listNumbers = []
+
+        }
+
+
+        setData(data) {
+
+            this.listNumbers.push(data)
+        }
+
+        getData() {
+
+            return this.listNumbers
+        }
+
+
+    }
+
+
+    class WCEventHandler {
+
+        constructor(objectWCData) {
+
+            this.WCData = objectWCData
+
+        }
+
+
+        onRequestData(data) {
+            this.WCData.setData(data)
+        }
+
+        onChangedData() {
+            let result = this.WCData.getData()
+            return result
+
+        }
+
+
+    } 
+    
+    
+    class WCView extends HTMLElement {
+
+        constructor(WCEHandler) {
+
+            super()
+            this.WCEHandler = WCEHandler
+            this.bttn = document.createElement("button")
+            this.bttn.textContent = "Update"
+            this.bttn.type="button"
+            this.value = 0
+            this.span = document.createElement("span")
+
+            this.appendChild(this.bttn)
+            this.appendChild(this.span)
+
+        }
+
+
+        showData(data) {
+            this.span.textContent = ""
+            this.span.textContent = data
+        }
+
+        changedData() {
+            this.value += 1
+            this.WCEHandler.onRequestData(this.value)
+            const data = this.WCEHandler.onChangedData()
+            this.showData(data)
+
+        }
+
+        connectedCallback(){
+        
+            this.bttn.onclick = this.changedData.bind(this)
+        
+        }
+
+        disconnectedCallback(){
+        
+            this.bttn.onclick = null
+        
+        }
+    }
+
+    customElements.define("x-wcview", WCView)
+
+    function main(){
+    
+        const objectWCData = new WCData()
+        const WCEHandler = new WCEventHandler(objectWCData)
+
+
+        const wcView = new WCView(WCEHandler)
+
+        document.body.appendChild(wcView)
+    
+    
+    
+    }
+
+
+    window.onload = main
+
+
+
+
+</script>
+
+
+</html>
