@@ -259,6 +259,7 @@ class Controller {
         this.model = object_model
 
         this.function1 = this.onViewRequest.bind(this)
+        // * .bind() crea una copia nueva cada vez que se ejecuta. Si la usamos dentro de enable() y otra vez dentro de disable(), son funciones diferentes. Para que removeEventListener funcione, guardamos la función con .bind() en el constructor y reusamos esa misma referencia, sino son referencias distintas por cada vez que se invoca FUNCION.bind()
         this.function2 = this.onViewRequestButton.bind(this)
         this.function3 = this.onModelChange.bind(this)
 
