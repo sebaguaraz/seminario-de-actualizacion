@@ -25,8 +25,10 @@ class Model extends EventTarget {
 
 class View extends HTMLElement {
 
-    constructor() {
+    constructor(exerciseNumber) {
         super();
+
+        this.exerciseNumber = exerciseNumber
 
         this._canvas = document.createElement('canvas');
         this._canvas.width = 800;
@@ -65,27 +67,38 @@ class View extends HTMLElement {
 
         this.option1 = document.createElement("option");
         this.option2 = document.createElement("option");
-        this.option3 = document.createElement("option");
 
-        this.option1.textContent = "miter";
-        this.option1.value = "miter";
-        this.option2.textContent = "round";
-        this.option2.value = "round";
-        this.option3.textContent = "bevel";
-        this.option3.value = "bevel";
-
-        this.InputTypeLine.appendChild(this.option1);
-        this.InputTypeLine.appendChild(this.option2);
-        this.InputTypeLine.appendChild(this.option3);
-        this.InputTypeLine.value = "miter";
+        this.option1.textContent = "continua";
+        this.option1.value = "continua";
+        this.option2.textContent = "discontinua";
+        this.option2.value = "discontinua";
 
         this.appendChild(this._canvas);
-        this.appendChild(this.buttonClear);
-        this.appendChild(this.buttonAskFigure);
-        this.appendChild(this.labelTypeLine);
-        this.appendChild(this.InputTypeLine);
-        this.appendChild(this.labelTypeWidth);
-        this.appendChild(this.InputTypeWidth);
+        this.showButtons()
+
+    }
+
+    showButtons() {
+
+        if (this.exerciseNumber === 6) {
+            this.appendChild(this.buttonClear);
+            this.appendChild(this.buttonAskFigure);
+            return
+        }
+
+        if (this.exerciseNumber === 12) {
+            this.appendChild(this.buttonClear);
+            this.appendChild(this.buttonAskFigure);
+            this.appendChild(this.labelTypeLine);
+            this.appendChild(this.InputTypeLine);
+            this.InputTypeLine.appendChild(this.option1);
+            this.InputTypeLine.appendChild(this.option2);
+            this.appendChild(this.labelTypeWidth);
+            this.appendChild(this.InputTypeWidth);
+            return
+
+        }
+
     }
 
     render(listFigures) {
@@ -96,13 +109,17 @@ class View extends HTMLElement {
         }
 
         for (const element of listFigures) {
-            const typeWidth = element.typeWidth || 1;
+            const typeWidth = element.typeWidth;
             const typeLine = element.typeLine
 
             if (element.tipo === "circulo") {
                 this.ctx.beginPath();
                 this.ctx.lineWidth = typeWidth;
-                this.ctx.lineJoin = "miter";
+                if (typeLine === "discontinua") {
+                    this.ctx.setLineDash([5, 5]);
+                } else {
+                    this.ctx.setLineDash([])
+                }
                 this.ctx.arc(element.x, element.y, element.radio, 0, 2 * Math.PI);
                 this.ctx.closePath();
                 this.ctx.stroke();
@@ -110,7 +127,11 @@ class View extends HTMLElement {
             } else if (element.tipo === "poligono") {
                 this.ctx.beginPath();
                 this.ctx.lineWidth = typeWidth;
-                this.ctx.lineJoin = typeLine;
+                if (typeLine === "discontinua") {
+                    this.ctx.setLineDash([5, 5]);
+                } else {
+                    this.ctx.setLineDash([])
+                }
                 this.ctx.moveTo(
                     element.x + element.puntos[0].x,
                     element.y + element.puntos[0].y
@@ -143,8 +164,8 @@ class View extends HTMLElement {
     }
 
     getData() {
-        const typeLine = String(this.InputTypeLine.value);
-        const typeWidth = Number(this.InputTypeWidth.value);
+        const typeLine = String(this.InputTypeLine.value) || "continua";
+        const typeWidth = Number(this.InputTypeWidth.value) || 1;
         return { typeLine, typeWidth };
     }
 

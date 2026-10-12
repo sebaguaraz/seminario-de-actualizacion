@@ -18,8 +18,9 @@
 
 	function main() {
 
+		const exerciseNumber = 6
+		const myView = new View(exerciseNumber);
 		const myModel = new Model();
-		const myView = new View();
 		const myController = new Controller(myView, myModel);
 		myController.enable();
 
