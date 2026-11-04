@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Ejercicio 19</title>
+    <meta name="generator" content="Geany 2.0" />
+    <script src="../MVCCanvas.js"></script>
+</head>
+
+<body>
+
+</body>
+
+<script>
+
+    // * 19. Integración: Tomando la integración del punto 12, agregar un botón selector (select) desplegable que permita seleccionar la figura que desee cargar (Círculo, Polígono) e incorpore un nuevo objeto llamado “CakeGraph” (Gráfico de torta circular) de modo que procese un JSON que contenga en su interior la descripción de datos que corresponda para representar un gráfico de tortas. Cada región (tajada) se rellena con un color aleatorio de forma automática. Es decir, no debe suministrar colores.
+
+    function main() {
+
+        const exerciseNumber = 19
+        const myView = new View(exerciseNumber);
+        const myModel = new Model();
+        const myController = new Controller(myView, myModel);
+        myController.enable();
+
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Ejercicio 19: Pedir figuras (circulo, poligono, torta cicular)';
+
+        document.body.appendChild(h1);
+        document.body.appendChild(myView);
+    }
+
+
+    window.onload = main;
+
+
+
+
+
+</script>
+
+</html>

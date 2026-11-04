@@ -1,0 +1,22 @@
+EJERCICIO 6: 
+
+{"tipo":"circulo","x":150,"y":150,"radio":50}
+
+{"tipo":"poligono","x":300,"y":200,"puntos":[{"x":0,"y":0},{"x":100,"y":0},{"x":50,"y":80}]}
+
+{"tipo":"poligono","x":350,"y":250,"puntos":[{"x":0,"y":0},{"x":100,"y":0},{"x":100,"y":100},{"x":0,"y":100}]}
+
+EJERCICIO 12: 
+
+{"tipo":"poligono","x":300,"y":150,"puntos":[{"x":0,"y":0},{"x":120,"y":0},{"x":60,"y":100}]}
+
+EJERCICIO 19: 
+
+PARA circulo
+{"x":150,"y":150,"radio":60}
+
+PARA poligono
+{"x":300,"y":200,"puntos":[{"x":0,"y":0},{"x":120,"y":0},{"x":60,"y":100}]}
+
+PARA GraficoTorta
+{"x":350,"y":250,"radio":100,"datos":[{"etiqueta":"Mate","valor":40},{"etiqueta":"Té","valor":35},{"etiqueta":"Café","valor":25}]}
