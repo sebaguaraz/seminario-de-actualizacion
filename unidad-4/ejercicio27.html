@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 27</title>
+</head>
+
+<body>
+
+
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+            this.config = {
+                skewAngle: Math.PI / 4,
+                rectHeight: 100,
+                rectWidth: 100
+            };
+        }
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+
+        getConfig() {
+            return this.config;
+        }
+
+    }
+
+
+    class View extends HTMLElement {
+
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 800
+            this.canvas.height = 800
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "27) Dibujar un rectángulo en el centro del área de dibujo y aplicar una rotación de 45 grados (utilizando Math.PI / 4)."
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+        }
+
+        render(config) {
+            this.clear();
+
+            this.drawCenteredRotatedRectangle(config)  
+            
+        }
+
+        drawCenteredRotatedRectangle(config) {
+            this.pincel2D.save();
+
+            const centroX = this.canvas.width / 2;
+            const centroY = this.canvas.height / 2;
+
+            this.pincel2D.translate(centroX, centroY);
+            this.pincel2D.rotate(config.skewAngle);
+
+            this.pincel2D.fillStyle = "red";
+            this.pincel2D.fillRect(-config.rectWidth / 2, -config.rectHeight / 2, config.rectWidth, config.rectHeight);
+
+            this.pincel2D.restore();
+        }
+
+        clear() {
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        askImage() {
+
+            this.dispatchEvent(new CustomEvent("ask", { detail: "askImage" }))
+
+        }
+
+        connectedCallback() {
+            console.log('Canvas (lienzo) agregado al DOM...')
+        }
+
+        disconnectedCallback() {
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('ask', this._onViewRequest);
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('ask', this._onViewRequest);
+        }
+        onModelChanged(event) {
+            this._view.render(this._model.getConfig())
+        }
+        onViewRequest(event) {
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>
+
+</html>

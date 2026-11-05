@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 30</title>
+</head>
+
+<body>
+
+
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+            this.config = {
+                side: 150,
+                skewAngle: Math.PI / 4
+            };
+        }
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+
+        getConfig() {
+            return this.config;
+        }
+
+    }
+
+
+    class View extends HTMLElement {
+
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 800
+            this.canvas.height = 800
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "30) Deformación lateral horizontal (Skew X): Utilizar la matriz de transformación ctx.transform(1, 0, tanX, 1, 0, 0) para aplicar una inclinación oblicua sobre el eje X a un cuadrado, convirtiéndolo en un paralelogramo."
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+        }
+
+        render(config) {
+            this.clear();
+
+            this.drawSkewedSquare(config)
+
+        }
+
+        drawSkewedSquare(config) {
+            this.pincel2D.save();
+
+            const centroX = this.canvas.width / 2;
+            const centroY = this.canvas.height / 2;
+            const lado = config.side;
+
+            this.pincel2D.translate(centroX, centroY);
+            this.pincel2D.transform(1, 0, Math.tan(config.skewAngle), 1, 0, 0);
+
+            this.pincel2D.fillStyle = "red";
+            this.pincel2D.fillRect(-lado / 2, -lado / 2, lado, lado);
+
+            this.pincel2D.restore();
+        }
+
+        clear() {
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        askImage() {
+
+            this.dispatchEvent(new CustomEvent("ask", { detail: "askImage" }))
+
+        }
+
+        connectedCallback() {
+            console.log('Canvas (lienzo) agregado al DOM...')
+        }
+
+        disconnectedCallback() {
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('ask', this._onViewRequest);
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('ask', this._onViewRequest);
+        }
+        onModelChanged(event) {
+            this._view.render(this._model.getConfig())
+        }
+        onViewRequest(event) {
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>
+
+</html>
