@@ -9,140 +9,139 @@
 
 <body>
 
+</body>
 
-    <script>
+<script>
 
+    class Model extends EventTarget {
+        constructor() {
+            super();
 
-        //* 8. Construya un objeto de datos acorde más flexible, que le permita al dibujador de gráficos de torta mostrar una etiqueta de texto personalizada para cada porción junto a su porcentaje.
-
-        class Model extends EventTarget {
-            constructor() {
-                super();
-
-            }
-
-            changed() {
-                this.dispatchEvent(new CustomEvent('changed'));
-            }
-        }
-
-
-        class View extends HTMLElement {
-
-            constructor() {
-                super()
-                this.canvas = document.createElement("canvas")
-                this.canvas.width = 500
-                this.canvas.height = 500
-                this.canvas.style = "border: 1px solid black; "
-                this.pincel2D = this.canvas.getContext("2d")
-
-
-                this.appendChild(this.canvas)
-
-            }
-
-            drawGraphic(listPoints, colors) {
-                let anguloI = 0
-                let anguloF = null
-                // * tamaña de la porcion del sector
-                let sectorSize = null
-                let posTextY = 100
-                let radio = 100
-                let indiceColor = 0
-
-                let centerX = this.canvas.width / 2
-                let centerY = this.canvas.height / 2
-
-
-                for (const element of listPoints) {
-                    console.log(element.value);
-
-                    this.pincel2D.beginPath()
-                    this.pincel2D.moveTo(centerX, centerY)
-                    sectorSize = element.value * 2 * Math.PI
-                    anguloF = anguloI + sectorSize
-                    this.pincel2D.arc(centerX, centerY, radio, anguloI, anguloF)
-                    this.pincel2D.closePath()
-
-                    this.pincel2D.fillStyle = colors[indiceColor]
-                    this.pincel2D.fill()
-                    this.pincel2D.fillStyle = colors[indiceColor]
-                    this.pincel2D.fillText(`${element.label}%`, 400, posTextY)
-
-                    this.pincel2D.stroke()
-                    anguloI = anguloF
-
-                    posTextY += 30
-                    indiceColor += 1
-                }
-
-            }
-
-            render() {
-
-                const listPoints = [
+            this.graphicData = {
+                values: [
                     { value: 0.30, label: "Porción 1" },
                     { value: 0.50, label: "Porción 2" },
                     { value: 0.10, label: "Porción 3" },
                     { value: 0.10, label: "Porción 4" }
-                ]
-
-                const colors = ["red", "blue", "green", "orange"]
-
-                this.drawGraphic(listPoints, colors)
-            }
-
-            connectedCallback() {
-                console.log('Canvas (lienzo) agregado al DOM...')
-
-                this.render()
-
-            }
-
-            disconnectedCallback() {
-
-            }
-
-        }
-        customElements.define('x-view', View);
-
-
-        class Controller {
-            constructor(view, model) {
-                this._view = view;
-                this._model = model;
-                this._onModelChanged = this.onModelChanged.bind(this);
-                this._onViewRequest = this.onViewRequest.bind(this);
-            }
-            enable() {
-                this._model.addEventListener('changed', this._onModelChanged);
-                this._view.addEventListener('request', this._onViewRequest);
-            }
-            disable() {
-                this._model.removeEventListener('changed', this._onModelChanged);
-                this._view.removeEventListener('request', this._onViewRequest);
-            }
-            onModelChanged() {
-
-            }
-            onViewRequest(event) {
-
-            }
+                ],
+                colors: ["red", "blue", "green", "orange"]
+            };
         }
 
-        function main() {
-            let myModel = new Model();
-            let myView = new View();
-            let myController = new Controller(myView, myModel);
-            myController.enable();
-            document.body.appendChild(myView);
+        getGraphicData() {
+            return this.graphicData;
         }
-        window.onload = main;
+
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+    }
 
 
-    </script>
+    class View extends HTMLElement {
 
-</body>
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 500
+            this.canvas.height = 500
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "8) Construya un objeto de datos acorde más flexible, que le permita al dibujador de gráficos de torta mostrar una etiqueta de texto personalizada para cada porción junto a su porcentaje."
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+
+        }
+
+        drawGraphic(listPoints, colors) {
+            let anguloInicial = 0;
+            const radio = 100;
+
+            const centerX = this.canvas.width / 2;
+            const centerY = this.canvas.height / 2;
+
+            for (let index = 0; index < listPoints.length; index++) {
+                const element = listPoints[index];
+
+                const sectorSize = element.value * 2 * Math.PI;
+                const anguloFinal = anguloInicial + sectorSize;
+
+                this.pincel2D.beginPath();
+                this.pincel2D.moveTo(centerX, centerY);
+
+                this.pincel2D.arc(centerX, centerY, radio, anguloInicial, anguloFinal);
+
+                this.pincel2D.closePath();
+
+                this.pincel2D.fillStyle = colors[index];
+                this.pincel2D.fill();
+
+                this.pincel2D.strokeStyle = "black";
+                this.pincel2D.stroke();
+
+                this.pincel2D.fillStyle = "black";
+                this.pincel2D.fillText(`${element.label}: ${element.value * 100}%`, centerX + 120, 100 + index * 30);
+
+                anguloInicial = anguloFinal;
+            }
+        }
+
+        render(data) {
+
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.drawGraphic(data.values, data.colors);
+        }
+
+        connectedCallback() {
+            console.log("Canvas agregado al DOM...");
+        }
+
+        disconnectedCallback() {
+
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('request', this._onViewRequest);
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('request', this._onViewRequest);
+        }
+        onModelChanged() {
+            this._view.render(this._model.getGraphicData());
+        }
+        onViewRequest(event) {
+
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+</script>
 
 </html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 16</title>
+</head>
+
+<body>
+
+
+
+
+</body>
+    <script>
+
+        class Model extends EventTarget {
+            constructor() {
+                super();
+                this.object = null
+            }
+            changed() {
+                this.dispatchEvent(new CustomEvent('changed'));
+            }
+
+            setColors(data) {
+                this.object = data
+                this.changed()
+            }
+
+            getColors() {
+                return this.object
+            }
+        }
+
+
+        class View extends HTMLElement {
+
+            constructor() {
+                super()
+                this.canvas = document.createElement("canvas")
+                this.canvas.width = 800
+                this.canvas.height = 800
+                this.canvas.style = "border: 1px solid black; "
+                this.pincel2D = this.canvas.getContext("2d")
+
+                this.h1 = document.createElement("h1")
+                this.h1.textContent = "16) Dibujar un círculo relleno mediante un gradiente radial donde el centro y el borde exterior compartan el mismo punto focal."
+
+                this.labelColor1 = document.createElement("label")
+                this.labelColor1.textContent = "ingrese color 1"
+                this.labelColor1.htmlFor = "color1"
+                this.inputColor1 = document.createElement("input")
+                this.inputColor1.id = "color1"
+                this.inputColor1.type = "color"
+
+                this.labelColor2 = document.createElement("label")
+                this.labelColor2.textContent = "ingrese color 2"
+                this.labelColor2.htmlFor = "color2"
+                this.inputColor2 = document.createElement("input")
+                this.inputColor2.id = "color2"
+                this.inputColor2.type = "color"
+
+                this.button = document.createElement("button")
+                this.button.textContent = "aplicar color del circulo"
+                this.button.type = "button"
+
+                this.appendChild(this.h1)
+                this.appendChild(this.canvas)
+                this.appendChild(this.labelColor1)
+                this.appendChild(this.inputColor1)
+                this.appendChild(this.labelColor2)
+                this.appendChild(this.inputColor2)
+                this.appendChild(this.button)
+            }
+
+            drawCircle(objectColor) {
+                this.clear()
+
+                const gradient = this.pincel2D.createRadialGradient(100, 200, 0, 100, 200, 70)
+                gradient.addColorStop(0, objectColor.color1)
+                gradient.addColorStop(1, objectColor.color2)
+                this.pincel2D.fillStyle = gradient
+
+                this.pincel2D.beginPath()
+                this.pincel2D.arc(100, 200, 70, 0, Math.PI * 2)
+                this.pincel2D.fill()
+
+            }
+
+            clear() {
+                this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+            }
+
+            askColors() {
+
+                this.dispatchEvent(new CustomEvent("ask", { detail: "askColors" }))
+
+            }
+
+            getColorsFromView() {
+                const color1 = String(this.inputColor1.value)
+                const color2 = String(this.inputColor2.value)
+
+                return { color1, color2 }
+            }
+
+            connectedCallback() {
+                console.log('Canvas (lienzo) agregado al DOM...')
+                this.button.onclick = this.askColors.bind(this)
+            }
+
+            disconnectedCallback() {
+                this.button.onclick = null
+            }
+
+        }
+        customElements.define('x-view', View);
+
+
+        class Controller {
+            constructor(view, model) {
+                this._view = view;
+                this._model = model;
+                this._onModelChanged = this.onModelChanged.bind(this);
+                this._onViewRequest = this.onViewRequest.bind(this);
+            }
+            enable() {
+                this._model.addEventListener('changed', this._onModelChanged);
+                this._view.addEventListener('ask', this._onViewRequest);
+            }
+            disable() {
+                this._model.removeEventListener('changed', this._onModelChanged);
+                this._view.removeEventListener('ask', this._onViewRequest);
+            }
+            onModelChanged(event) {
+                this._view.drawCircle(this._model.getColors())
+            }
+            // this.dispatchEvent(new CustomEvent("ask", { detail: "askColors" }))
+            onViewRequest(event) {
+                if (event.detail === "askColors") {
+
+                    const { color1, color2 } = this._view.getColorsFromView()
+
+                    if (!color1 || !color2) {
+                        alert("debe ingresar obligatoriamente los dos colores")
+                        return
+                    }
+
+                    const data = { color1: color1, color2: color2 }
+                    this._model.setColors(data)
+
+                }
+            }
+        }
+
+        function main() {
+            let myModel = new Model();
+            let myView = new View();
+            let myController = new Controller(myView, myModel);
+            myController.enable();
+            document.body.appendChild(myView);
+        }
+        window.onload = main;
+
+
+
+    </script>
+
+</html>

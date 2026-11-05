@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 21</title>
+</head>
+
+<body>
+
+
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+            this.object = null
+        }
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+
+        setImage(data) {
+            this.object = data
+            this.changed()
+        }
+
+        getImage() {
+            return this.object
+        }
+    }
+
+
+    class View extends HTMLElement {
+
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 800
+            this.canvas.height = 800
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.pincel2D.imageSmoothingEnabled = true
+            this.pincel2D.imageSmoothingQuality = 'high'; // Le pido la mejor calidad posible
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "21) Cargar una imagen y dibujarla en modo escalado de modo que ocupe todo el ancho y alto del área de dibujo."
+
+            this.labelImage = document.createElement("label")
+            this.labelImage.textContent = "ingrese imagen: "
+            this.labelImage.htmlFor = "img"
+            this.inputImage = document.createElement("input")
+            this.inputImage.id = "img"
+            this.inputImage.type = "text"
+
+
+            this.button = document.createElement("button")
+            this.button.textContent = "aplicar imagen"
+            this.button.type = "button"
+
+            this.image = new Image()
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+            this.appendChild(this.labelImage)
+            this.appendChild(this.inputImage)
+            this.appendChild(this.button)
+        }
+
+        render(data) {
+            this.clear();
+
+            this.image.onload = this.loadImageIntoNavegation.bind(this);
+
+            if (this.image.src !== data.image) {
+                this.image.src = data.image;
+            }
+
+            if (this.image.complete && this.image.naturalWidth > 0) {
+                this.loadImageIntoNavegation();
+            }
+        }
+
+        loadImageIntoNavegation() {
+            this.pincel2D.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        clear() {
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        askImage() {
+
+            this.dispatchEvent(new CustomEvent("ask", { detail: "askImage" }))
+
+        }
+
+        getImage() {
+            const image = this.inputImage.value.trim()
+            return { image }
+        }
+
+        connectedCallback() {
+            console.log('Canvas (lienzo) agregado al DOM...')
+            this.button.onclick = this.askImage.bind(this)
+        }
+
+        disconnectedCallback() {
+            this.button.onclick = null
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('ask', this._onViewRequest);
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('ask', this._onViewRequest);
+        }
+        onModelChanged(event) {
+            this._view.render(this._model.getImage())
+        }
+        // this.dispatchEvent(new CustomEvent("ask", { detail: "askColors" }))
+        onViewRequest(event) {
+            if (event.detail === "askImage") {
+
+                const { image } = this._view.getImage()
+
+                if (image === "") {
+                    alert("debe ingresar obligatoriamente la imagen")
+                    return
+                }
+
+                const data = { image }
+                this._model.setImage(data)
+
+            }
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>
+
+</html>

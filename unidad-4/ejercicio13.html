@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 13</title>
+</head>
+
+<body>
+
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+
+            this.color = {
+                red: 50,
+                green: 50,
+                blue: 50
+            };
+        }
+
+        getColor() {
+            return this.color;
+        }
+
+        setColor(color) {
+            this.color = color;
+            this.changed();
+        }
+
+        changed() {
+            this.dispatchEvent(new CustomEvent("changed"));
+        }
+    }
+
+
+    class View extends HTMLElement {
+
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 256
+            this.canvas.height = 256
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "13) Construir un tablero simil de ajedrez (8x8) casillas cuadradas de 32px de ancho. Colocar en la interfaz (por fuera del canvas) un slider que para cada componente de color RGB. Todos las casillas del tablero que contendrían la coloración negra, deberán aplicar el color según la configuración RGB de los sliders. Utilice el slider (WebComponent) desarrollado en unidades anteriores."
+
+            this.labelRed = document.createElement("label")
+            this.labelRed.textContent = "slider Rojo"
+            this.inputRed = document.createElement("input")
+            this.inputRed.type = "range"
+            this.inputRed.min = "0"
+            this.inputRed.max = "255"
+            this.inputRed.value = "50"
+
+            this.labelGreen = document.createElement("label")
+            this.labelGreen.textContent = "slider Verde"
+            this.inputGreen = document.createElement("input")
+            this.inputGreen.type = "range"
+            this.inputGreen.min = "0"
+            this.inputGreen.max = "255"
+            this.inputGreen.value = "50"
+
+            this.labelBlue = document.createElement("label")
+            this.labelBlue.textContent = "slider Azul"
+            this.inputBlue = document.createElement("input")
+            this.inputBlue.type = "range"
+            this.inputBlue.min = "0"
+            this.inputBlue.max = "255"
+            this.inputBlue.value = "50"
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+            this.appendChild(this.labelRed)
+            this.appendChild(this.inputRed)
+            this.appendChild(this.labelBlue)
+            this.appendChild(this.inputBlue)
+            this.appendChild(this.labelGreen)
+            this.appendChild(this.inputGreen)
+        }
+
+        drawTable(color) {
+            this.clear();
+
+            const filas = 8;
+            const columnas = 8;
+            const tamaño = 32;
+
+            for (let fila = 0; fila < filas; fila++) {
+                for (let columna = 0; columna < columnas; columna++) {
+                    const x = columna * tamaño;
+                    const y = fila * tamaño;
+
+                    if ((fila + columna) % 2 === 0) {
+                        this.pincel2D.fillStyle = "white";
+                    } else {
+                        this.pincel2D.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
+                    }
+
+                    this.pincel2D.fillRect(x, y, tamaño, tamaño);
+                }
+            }
+        }
+
+        clear() {
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        render(color) {
+            this.drawTable(color);
+        }
+
+        getColors() {
+
+            this.dispatchEvent(
+                new CustomEvent("colorChanged", {
+                    detail: {
+                        red: Number(this.inputRed.value), green: Number(this.inputGreen.value), blue: Number(this.inputBlue.value)
+                    }
+                })
+            )
+        }
+
+        connectedCallback() {
+            console.log("Canvas agregado al DOM...");
+
+            this.inputRed.oninput = this.getColors.bind(this)
+
+            this.inputGreen.oninput = this.getColors.bind(this)
+
+            this.inputBlue.oninput = this.getColors.bind(this)
+
+        }
+
+        disconnectedCallback() {
+            this.inputRed.oninput = null
+            this.inputBlue.oninput = null
+            this.inputGreen.oninput = null
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+            this._onColorChanged = this.onColorChanged.bind(this);
+        }
+        enable() {
+            this._model.addEventListener("changed", this._onModelChanged);
+
+            this._view.addEventListener("colorChanged", this._onColorChanged);
+
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener("changed", this._onModelChanged);
+
+            this._view.removeEventListener("colorChanged", this._onColorChanged);
+        }
+
+        onModelChanged() {
+            this._view.render(this._model.getColor());
+        }
+
+        onColorChanged(event) {
+            this._model.setColor(event.detail);
+        }
+
+        onViewRequest(){}
+
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>
+
+
+</html>

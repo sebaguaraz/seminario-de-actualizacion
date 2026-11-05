@@ -9,143 +9,140 @@
 
 <body>
 
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+
+            this.dartData = {
+                width: 500,
+                height: 500,
+                separation: 50,
+                scores: [1000, 750, 500, 100, 50]
+            };
+        }
+
+        getDartData() {
+            return this.dartData;
+        }
+
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+
+    }
 
 
-    <script>
+    class View extends HTMLElement {
 
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 500
+            this.canvas.height = 500
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
 
-        //* 5. Reutilizando el código del punto anterior, y empleando las primitivas de dibujado de texto. Construir un tablero de dardos, en donde se reparta el área del cuadrado para que entren hasta 5 círculos concéntricos. Entre el espacio de cada círculo, se deberá distribuir el valor de puntaje según el array: [1000, 750, 500, 100, 50] donde el centro representa el mayor valor.
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "5) Reutilizando el código del punto anterior, y empleando las primitivas de dibujado de texto. Construir un tablero de dardos, en donde se reparta el área del cuadrado para que entren hasta 5 círculos concéntricos. Entre el espacio de cada círculo, se deberá distribuir el valor de puntaje según el array: [1000, 750, 500, 100, 50] donde el centro representa el mayor valor."
 
-        class Model extends EventTarget {
-            constructor() {
-                super();
-            }
-
-            changed() {
-                this.dispatchEvent(new CustomEvent('changed'));
-            }
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
 
         }
 
+        drawTableDardes(X, Y, radioMaximo, anguloI, anguloF, separation, listNumber) {
+            let radioActual = separation;
+            let indicePuntaje = 1;
+            let posicionTexto = Y - separation - separation / 2;
 
-        class View extends HTMLElement {
+            this.pincel2D.textAlign = "center";
+            this.pincel2D.textBaseline = "middle";
 
-            constructor() {
-                super()
-                this.canvas = document.createElement("canvas")
-                this.canvas.width = 500
-                this.canvas.height = 500
-                this.canvas.style = "border: 1px solid black; "
-                this.pincel2D = this.canvas.getContext("2d")
-                this.appendChild(this.canvas)
+            // Puntaje del centro
+            this.pincel2D.fillText(listNumber[0], X, Y);
 
-            }
+            while (radioActual <= radioMaximo) {
+                this.pincel2D.beginPath();
 
-            drawTableDardes(X, Y, radioMaximo, anguloI, anguloF) {
+                this.pincel2D.arc(X, Y, radioActual, anguloI, anguloF);
 
-                const listNumber = [1000, 750, 500, 100, 50]
+                this.pincel2D.stroke();
 
-                const separacion = 50
-                let radioVariante = separacion
-                let n = 1
-                let posVariacionTexto = Y - separacion - separacion / 2
+                if (indicePuntaje < listNumber.length) {
+                    this.pincel2D.fillText(listNumber[indicePuntaje], X, posicionTexto);
 
-                this.pincel2D.textAlign = "center"
-                this.pincel2D.textBaseline = "middle"
-
-                // El puntaje central se dibuja una sola vez
-                this.pincel2D.fillText(listNumber[0], X, Y)
-
-                while (radioVariante <= radioMaximo) {
-                    this.pincel2D.beginPath()
-                    this.pincel2D.arc(X, Y, radioVariante, anguloI, anguloF)
-
-                    // Solo escribe los cuatro puntajes de los anillos
-                    if (n < listNumber.length) {
-                        this.pincel2D.fillText(listNumber[n], X, posVariacionTexto)
-
-                        posVariacionTexto -= separacion
-                        n++
-                    }
-                    radioVariante += separacion
-
-                    this.pincel2D.closePath()
-                    this.pincel2D.stroke()
-
+                    indicePuntaje++;
+                    posicionTexto -= separation;
                 }
 
-
-
-            }
-
-            render() {
-
-                console.log('Canvas (lienzo) agregado al DOM...')
-                console.log(this.pincel2D)
-
-                //* punto medio del circulo usando X,Y
-                let X = this.canvas.width / 2
-                let Y = this.canvas.height / 2
-
-                let radioMaximo = 250
-                let anguloI = 0
-                let anguloF = 2 * Math.PI
-
-                console.log("creando CIRCULOS CONCENTRICOS...");
-
-                this.drawTableDardes(X, Y, radioMaximo, anguloI, anguloF)
-
-            }
-            connectedCallback() {
-
-                this.render()
-
-            }
-            disconnectedCallback() {
-
-            }
-
-            _onSave() {
-
-            }
-        }
-        customElements.define('x-view', View);
-
-
-        class Controller {
-            constructor(view, model) {
-                this._view = view;
-                this._model = model;
-                this._onModelChanged = this.onModelChanged.bind(this);
-                this._onViewRequest = this.onViewRequest.bind(this);
-            }
-            enable() {
-                this._model.addEventListener('changed', this._onModelChanged);
-                this._view.addEventListener('request', this._onViewRequest);
-            }
-            disable() {
-                this._model.removeEventListener('changed', this._onModelChanged);
-                this._view.removeEventListener('request', this._onViewRequest);
-            }
-            onModelChanged() {
-
-            }
-            onViewRequest(event) {
-
+                radioActual += separation;
             }
         }
 
-        function main() {
-            let myModel = new Model();
-            let myView = new View();
-            let myController = new Controller(myView, myModel);
-            myController.enable();
-            document.body.appendChild(myView);
+        render(data) {
+
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            const X = data.width / 2;
+            const Y = data.height / 2;
+
+            const radioMaximo = data.width / 2;
+            const anguloI = 0;
+            const anguloF = 2 * Math.PI;
+
+            this.drawTableDardes(X, Y, radioMaximo, anguloI, anguloF, data.separation, data.scores);
         }
-        window.onload = main;
 
-    </script>
+        connectedCallback() {
+            console.log("Canvas agregado al DOM...");
+        }
+        disconnectedCallback() {
 
-</body>
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('request', this._onViewRequest);
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('request', this._onViewRequest);
+        }
+
+        onModelChanged() {
+            this._view.render(this._model.getDartData());
+        }
+
+        onViewRequest(event) {
+
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+</script>
 
 </html>

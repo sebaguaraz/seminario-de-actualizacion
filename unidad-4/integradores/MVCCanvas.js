@@ -348,6 +348,10 @@ class Controller {
             return "El JSON debe representar un objeto";
         }
 
+        if (this._view.getExerciseNumber() !== 19 && result.tipo === "GraficoTorta") {
+            return "El gráfico de torta solo está disponible en el ejercicio 19";
+        }
+
         if (result.tipo !== "circulo" && result.tipo !== "poligono" && result.tipo !== "GraficoTorta") {
             return "El tipo de figura no es válido";
         }

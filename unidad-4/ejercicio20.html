@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejercicio 20</title>
+</head>
+
+<body>
+
+
+</body>
+
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+            this.object = null
+        }
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+
+        setObjectPositions(data) {
+            this.object = data
+            this.changed()
+        }
+
+        getObjectPositions() {
+            return this.object
+        }
+    }
+
+
+    class View extends HTMLElement {
+
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 800
+            this.canvas.height = 800
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
+
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "20) Cargar una imagen mediante la API de Image() y dibujarla completa dentro del canvas en una posición específica."
+
+            this.labelPositionX = document.createElement("label")
+            this.labelPositionX.textContent = "ingrese posicion X: "
+            this.labelPositionX.htmlFor = "pos1"
+            this.inputPositionX = document.createElement("input")
+            this.inputPositionX.id = "pos1"
+            this.inputPositionX.type = "number"
+
+            this.labelPositionY = document.createElement("label")
+            this.labelPositionY.textContent = "ingrese posicion Y: "
+            this.labelPositionY.htmlFor = "pos2"
+            this.inputPositionY = document.createElement("input")
+            this.inputPositionY.id = "pos2"
+            this.inputPositionY.type = "number"
+
+            this.button = document.createElement("button")
+            this.button.textContent = "aplicar posiciones a la imagen"
+            this.button.type = "button"
+
+            this.image = new Image()
+
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
+            this.appendChild(this.labelPositionX)
+            this.appendChild(this.inputPositionX)
+            this.appendChild(this.labelPositionY)
+            this.appendChild(this.inputPositionY)
+            this.appendChild(this.button)
+        }
+
+        render(data) {
+            this.clear();
+
+            const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA1QKGf99V6LFXyGXr8k5MguNl-WucYnlIJVtXcvHsBQ&s=10";
+
+            this.image.onload = this.loadImageIntoNavegation.bind(this, data);
+            
+
+            if (this.image.src !== imageUrl) {
+                this.image.src = imageUrl;
+            }
+
+            if (this.image.complete && this.image.naturalWidth > 0) {
+                this.loadImageIntoNavegation(data);
+            }
+        }
+
+        loadImageIntoNavegation(data) {
+            this.pincel2D.drawImage(this.image, data.positionX, data.positionY, 100, 100)
+        }
+
+        clear() {
+            this.pincel2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        askPositions() {
+
+            this.dispatchEvent(new CustomEvent("ask", { detail: "askPositions" }))
+
+        }
+
+        getObjectPositions() {
+            const positionX = this.inputPositionX.value.trim()
+            const positionY = this.inputPositionY.value.trim()
+
+            return { positionX, positionY }
+        }
+
+        connectedCallback() {
+            console.log('Canvas (lienzo) agregado al DOM...')
+            this.button.onclick = this.askPositions.bind(this)
+        }
+
+        disconnectedCallback() {
+            this.button.onclick = null
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('ask', this._onViewRequest);
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('ask', this._onViewRequest);
+        }
+        onModelChanged(event) {
+            this._view.render(this._model.getObjectPositions())
+        }
+        // this.dispatchEvent(new CustomEvent("ask", { detail: "askColors" }))
+        onViewRequest(event) {
+            if (event.detail === "askPositions") {
+
+                const { positionX, positionY } = this._view.getObjectPositions()
+
+                if (positionX === "" || positionX < 0 || positionY === "" || positionY < 0) {
+                    alert("debe ingresar obligatoriamente las dos posiciones")
+                    return
+                }
+
+                const data = { positionX: Number(positionX), positionY: Number(positionY) }
+                this._model.setObjectPositions(data)
+
+            }
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
+
+
+
+</script>
+
+</html>

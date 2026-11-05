@@ -10,120 +10,131 @@
 <body>
 
 
-    <script>
-        // * 11. Líneas punteadas (setLineDash): Construir una función que dibuje una grilla de líneas diagonales separadas cada 15px, alternando patrones de trazos continuos y punteados.
+</body>
 
-        class Model extends EventTarget {
-            constructor() {
-                super();
-            }
-            changed() {
-                this.dispatchEvent(new CustomEvent('changed'));
-            }
+<script>
+
+    class Model extends EventTarget {
+        constructor() {
+            super();
+
+            this.lineData = {
+                width: 800,
+                height: 800,
+                separation: 15,
+                dottedPattern: [10, 5],
+                diagonalOffset: 100
+            };
         }
 
-
-        class View extends HTMLElement {
-
-            constructor() {
-                super()
-                this.canvas = document.createElement("canvas")
-                this.canvas.width = 800
-                this.canvas.height = 800
-                this.canvas.style = "border: 1px solid black; "
-                this.pincel2D = this.canvas.getContext("2d")
+        getLineData() {
+            return this.lineData;
+        }
+        changed() {
+            this.dispatchEvent(new CustomEvent('changed'));
+        }
+    }
 
 
-                this.appendChild(this.canvas)
+    class View extends HTMLElement {
 
-            }
+        constructor() {
+            super()
+            this.canvas = document.createElement("canvas")
+            this.canvas.width = 800
+            this.canvas.height = 800
+            this.canvas.style = "border: 1px solid black; "
+            this.pincel2D = this.canvas.getContext("2d")
 
-            drawLines() {
+            this.h1 = document.createElement("h1")
+            this.h1.textContent = "11) Líneas punteadas (setLineDash): Construir una función que dibuje una grilla de líneas diagonales separadas cada 15px, alternando patrones de trazos continuos y punteados."
 
-                let line = 1
-                // Dibujamos líneas cada 40 píxeles de distancia
-                for (let separacionx = 0; separacionx < this.canvas.width; separacionx += 15) {
+            this.appendChild(this.h1)
+            this.appendChild(this.canvas)
 
-                    if (line % 2 === 0) {
-                        this.pincel2D.beginPath();
-                        this.pincel2D.moveTo(separacionx, 0);       // Empieza arriba, moviéndose a la derecha
-                        this.pincel2D.lineTo(separacionx + 100, this.canvas.height); // Termina abajo, un poco más a la derecha
-                        this.pincel2D.setLineDash([])
-                        this.pincel2D.stroke(); // Pinta cada línea del bucle
+        }
 
-                    } else {
-                        
-                        this.pincel2D.beginPath();
-                        this.pincel2D.moveTo(separacionx, 0);       // Empieza arriba, moviéndose a la derecha
-                        this.pincel2D.lineTo(separacionx + 100, this.canvas.height); // Termina abajo, un poco más a la derecha
-                        this.pincel2D.setLineDash([10, 5])
-                        this.pincel2D.stroke(); // Pinta todas las líneas del bucle
-                    }
-                    line+=1
-                    
+        drawLines(data) {
+            let indiceLinea = 0;
+
+            for (let posicionX = 0; posicionX < this.canvas.width; posicionX += data.separation) {
+                this.pincel2D.beginPath();
+
+                if (indiceLinea % 2 === 0) {
+                    this.pincel2D.setLineDash([]);
+                } else {
+                    this.pincel2D.setLineDash(data.dottedPattern);
                 }
 
+                this.pincel2D.moveTo(posicionX, 0);
 
+                this.pincel2D.lineTo(posicionX + data.diagonalOffset, this.canvas.height);
 
+                this.pincel2D.stroke();
+
+                indiceLinea++;
             }
 
-            render() {
-
-                this.drawLines()
-            }
-
-            connectedCallback() {
-                console.log('Canvas (lienzo) agregado al DOM...')
-
-                this.render()
-
-            }
-
-            disconnectedCallback() {
-
-            }
-
-        }
-        customElements.define('x-view', View);
-
-
-        class Controller {
-            constructor(view, model) {
-                this._view = view;
-                this._model = model;
-                this._onModelChanged = this.onModelChanged.bind(this);
-                this._onViewRequest = this.onViewRequest.bind(this);
-            }
-            enable() {
-                this._model.addEventListener('changed', this._onModelChanged);
-                this._view.addEventListener('request', this._onViewRequest);
-            }
-            disable() {
-                this._model.removeEventListener('changed', this._onModelChanged);
-                this._view.removeEventListener('request', this._onViewRequest);
-            }
-            onModelChanged() {
-
-            }
-            onViewRequest(event) {
-
-            }
+            // Deja el contexto nuevamente en modo continuo
+            this.pincel2D.setLineDash([]);
         }
 
-        function main() {
-            let myModel = new Model();
-            let myView = new View();
-            let myController = new Controller(myView, myModel);
-            myController.enable();
-            document.body.appendChild(myView);
+        render(data) {
+            this.canvas.width = data.width;
+            this.canvas.height = data.height;
+
+            this.drawLines(data);
         }
-        window.onload = main;
+
+        connectedCallback() {
+            console.log("Canvas agregado al DOM...");
+        }
+
+        disconnectedCallback() {
+
+        }
+
+    }
+    customElements.define('x-view', View);
+
+
+    class Controller {
+        constructor(view, model) {
+            this._view = view;
+            this._model = model;
+            this._onModelChanged = this.onModelChanged.bind(this);
+            this._onViewRequest = this.onViewRequest.bind(this);
+        }
+        enable() {
+            this._model.addEventListener('changed', this._onModelChanged);
+            this._view.addEventListener('request', this._onViewRequest);
+            this.onModelChanged();
+        }
+        disable() {
+            this._model.removeEventListener('changed', this._onModelChanged);
+            this._view.removeEventListener('request', this._onViewRequest);
+        }
+
+        onModelChanged() {
+            this._view.render(this._model.getLineData());
+        }
+
+        onViewRequest(event) {
+
+        }
+    }
+
+    function main() {
+        let myModel = new Model();
+        let myView = new View();
+        let myController = new Controller(myView, myModel);
+        myController.enable();
+        document.body.appendChild(myView);
+    }
+    window.onload = main;
 
 
 
-    </script>
-
-
-</body>
+</script>
 
 </html>
